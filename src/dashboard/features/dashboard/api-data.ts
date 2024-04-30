@@ -1,3 +1,65 @@
+import { cache } from "react";
+
+export interface APIResponse {
+  total_suggestions_count: number;
+  total_acceptances_count: number;
+  total_lines_suggested: number;
+  total_lines_accepted: number;
+  total_active_users: number;
+  total_chat_acceptances: number;
+  total_chat_turns: number;
+  total_active_chat_users: number;
+  day: string;
+  breakdown: Breakdown[];
+}
+
+export interface Breakdown {
+  language: string;
+  editor: string;
+  suggestions_count: number;
+  acceptances_count: number;
+  lines_suggested: number;
+  lines_accepted: number;
+  active_users: number;
+}
+
+export const getData = cache(async (): Promise<APIResponse[]> => {
+  const promise = new Promise<APIResponse[]>((resolve) => {
+    setTimeout(() => {
+      resolve(data);
+    }, 1000);
+  });
+
+  return promise;
+});
+
+export const getAcceptanceRates = async () => {
+  const allData = await getData();
+  const rates = allData.map((item) => {
+    const {
+      total_suggestions_count,
+      total_acceptances_count,
+      total_lines_accepted,
+      total_lines_suggested,
+      total_chat_acceptances,
+      total_chat_turns,
+      day,
+    } = item;
+    const completionAcceptanceRate =
+      (total_lines_accepted / total_lines_suggested) * 100;
+    const chatAcceptanceRate =
+      (total_chat_acceptances / total_chat_turns) * 100;
+
+    return {
+      completionAcceptanceRate,
+      chatAcceptanceRate,
+      day,
+    };
+  });
+
+  return rates;
+};
+
 export const data = [
   {
     total_suggestions_count: 8312,

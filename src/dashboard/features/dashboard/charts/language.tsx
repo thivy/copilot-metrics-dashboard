@@ -51,7 +51,7 @@ export const Language = async () => {
           Used to identify your store in the marketplace.
         </CardDescription>
       </CardHeader>
-      <CardContent className="mih-[30dvh]">
+      <CardContent className="min-h-[40vh]">
         <LanguageChart data={ides} />
       </CardContent>
     </Card>

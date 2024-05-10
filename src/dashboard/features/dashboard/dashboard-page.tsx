@@ -1,5 +1,6 @@
 import { DatePickerWithRange } from "@/components/ui/data-picker";
 import { PageHeader, PageTitle } from "@/features/page-header/page-header";
+import { AcceptanceCount } from "./charts/acceptance-count";
 import { AcceptanceRate } from "./charts/acceptance-rate";
 import { AcceptanceSuggestionsCount } from "./charts/acceptance-suggestions-count";
 import { Language } from "./charts/language";
@@ -36,6 +37,7 @@ export default function Dashboard() {
             description="Total lines of code accepted."
             value="94735"
           />
+          <AcceptanceCount />
           <AcceptanceRate />
           <AcceptanceSuggestionsCount />
           <Language /> <Language />

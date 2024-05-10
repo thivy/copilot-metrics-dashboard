@@ -18,16 +18,16 @@ export const AcceptanceRateChart = (props: { data: Serie[] }) => (
     axisTop={null}
     axisRight={null}
     axisBottom={{
-      tickSize: 10,
-      tickPadding: 10,
+      tickSize: 5,
+      tickPadding: 5,
       tickRotation: -45,
     }}
     axisLeft={{
-      tickSize: 10,
+      tickSize: 5,
       tickPadding: 10,
       tickRotation: 0,
     }}
-    colors={{ scheme: "set2" }}
+    colors={{ scheme: "nivo" }}
     pointSize={10}
     pointColor={{ theme: "background" }}
     pointBorderWidth={2}

@@ -1,5 +1,5 @@
 import { cache } from "react";
-import { LanguageChartProps } from "./charts/language-chart";
+import { LanguageChartData } from "./charts/language-chart";
 
 export interface APIResponse {
   total_suggestions_count: number;
@@ -36,7 +36,7 @@ export const getData = cache(async (): Promise<APIResponse[]> => {
 
 export const getLanguageData = async () => {
   const allData = await getData();
-  const languages: Array<LanguageChartProps> = [];
+  const languages: Array<LanguageChartData> = [];
 
   allData.forEach((item) => {
     item.breakdown.forEach((breakdown) => {
@@ -60,7 +60,7 @@ export const getLanguageData = async () => {
 
 export const getIDEData = async () => {
   const allData = await getData();
-  const editors: Array<LanguageChartProps> = [];
+  const editors: Array<LanguageChartData> = [];
 
   allData.forEach((item) => {
     item.breakdown.forEach((breakdown) => {
@@ -82,6 +82,29 @@ export const getIDEData = async () => {
   return editors;
 };
 
+export const formatDate = (date: string) => {
+  return new Date(date).toLocaleDateString("en-AU", {
+    month: "short",
+    day: "numeric",
+  });
+};
+
+export const getAcceptanceCount = async () => {
+  const allData = await getData();
+  const rates = allData.map((item) => {
+    const { total_lines_accepted, total_lines_suggested, day } = item;
+
+    return {
+      total_lines_accepted,
+      total_lines_suggested,
+      day,
+      dayAndMonth: formatDate(day),
+    };
+  });
+
+  return rates;
+};
+
 export const getAcceptanceRates = async () => {
   const allData = await getData();
   const rates = allData.map((item) => {
@@ -89,9 +112,6 @@ export const getAcceptanceRates = async () => {
     const completionAcceptanceRate =
       Math.round((total_lines_accepted / total_lines_suggested) * 100 * 100) /
       100;
-
-    // round it to full numbers
-
     return {
       completionAcceptanceRate,
       day,

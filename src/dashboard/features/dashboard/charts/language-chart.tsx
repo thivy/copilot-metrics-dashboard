@@ -2,13 +2,13 @@
 import { cn } from "@/lib/utils";
 import { ResponsivePie } from "@nivo/pie";
 
-export interface LanguageChartProps {
+export interface LanguageChartData {
   id: string;
   name: string;
   value: number;
 }
 
-export const LanguageChart = ({ data }: { data: LanguageChartProps[] }) => {
+export const LanguageChart = ({ data }: { data: LanguageChartData[] }) => {
   return (
     <div className="w-full h-full flex flex-col gap-4">
       <ResponsivePie
@@ -38,7 +38,13 @@ export const LanguageChart = ({ data }: { data: LanguageChartProps[] }) => {
   );
 };
 
-const Legend = ({ className, name }: { name: string; className: string }) => {
+export const Legend = ({
+  className,
+  name,
+}: {
+  name: string;
+  className: string;
+}) => {
   return (
     <div className="flex gap-2 items-center">
       <div className={cn("w-4 h-4 rounded-full", className)}></div>

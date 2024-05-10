@@ -1,8 +1,9 @@
 import { DatePickerWithRange } from "@/components/ui/data-picker";
 import { PageHeader, PageTitle } from "@/features/page-header/page-header";
-import { HeroChart } from "./hero-chart";
+import { AcceptanceRate } from "./charts/acceptance-rate";
+import { AcceptanceSuggestionsCount } from "./charts/acceptance-suggestions-count";
+import { Language } from "./charts/language";
 import StatsCard from "./stats-card";
-import { TopLanguageChart } from "./top-language-chart";
 
 export default function Dashboard() {
   return (
@@ -35,8 +36,9 @@ export default function Dashboard() {
             description="Total lines of code accepted."
             value="94735"
           />
-          <HeroChart />
-          <TopLanguageChart /> <TopLanguageChart />
+          <AcceptanceRate />
+          <AcceptanceSuggestionsCount />
+          <Language /> <Language />
         </div>
       </div>
     </main>

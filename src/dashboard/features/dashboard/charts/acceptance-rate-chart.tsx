@@ -1,7 +1,7 @@
 "use client";
 import { ResponsiveLine, Serie } from "@nivo/line";
 
-export const HeroLineChart = (props: { data: Serie[] }) => (
+export const AcceptanceRateChart = (props: { data: Serie[] }) => (
   <ResponsiveLine
     data={props.data}
     curve="catmullRom"

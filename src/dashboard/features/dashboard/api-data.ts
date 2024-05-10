@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { LanguageChartProps } from "./charts/language-chart";
 
 export interface APIResponse {
   total_suggestions_count: number;
@@ -33,26 +34,66 @@ export const getData = cache(async (): Promise<APIResponse[]> => {
   return promise;
 });
 
+export const getLanguageData = async () => {
+  const allData = await getData();
+  const languages: Array<LanguageChartProps> = [];
+
+  allData.forEach((item) => {
+    item.breakdown.forEach((breakdown) => {
+      const { language } = breakdown;
+      const languageToEdit = languages.find((e) => e.id === language);
+
+      if (languageToEdit) {
+        languageToEdit.value += breakdown.active_users;
+        return;
+      }
+      languages.push({
+        id: language,
+        name: language,
+        value: breakdown.active_users,
+      });
+    });
+  });
+
+  return languages;
+};
+
+export const getIDEData = async () => {
+  const allData = await getData();
+  const editors: Array<LanguageChartProps> = [];
+
+  allData.forEach((item) => {
+    item.breakdown.forEach((breakdown) => {
+      const { editor } = breakdown;
+      const editorToEdit = editors.find((e) => e.id === editor);
+
+      if (editorToEdit) {
+        editorToEdit.value += breakdown.active_users;
+        return;
+      }
+      editors.push({
+        id: editor,
+        name: editor,
+        value: breakdown.active_users,
+      });
+    });
+  });
+
+  return editors;
+};
+
 export const getAcceptanceRates = async () => {
   const allData = await getData();
   const rates = allData.map((item) => {
-    const {
-      total_suggestions_count,
-      total_acceptances_count,
-      total_lines_accepted,
-      total_lines_suggested,
-      total_chat_acceptances,
-      total_chat_turns,
-      day,
-    } = item;
+    const { total_lines_accepted, total_lines_suggested, day } = item;
     const completionAcceptanceRate =
-      (total_lines_accepted / total_lines_suggested) * 100;
-    const chatAcceptanceRate =
-      (total_chat_acceptances / total_chat_turns) * 100;
+      Math.round((total_lines_accepted / total_lines_suggested) * 100 * 100) /
+      100;
+
+    // round it to full numbers
 
     return {
       completionAcceptanceRate,
-      chatAcceptanceRate,
       day,
     };
   });

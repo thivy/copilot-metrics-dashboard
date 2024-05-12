@@ -12,7 +12,7 @@ import { Legend } from "./language-chart";
 
 export const AcceptanceCount = async () => {
   const acceptance = await getAcceptanceCount();
-
+  console.log(acceptance);
   return (
     <Card className="col-span-4">
       <CardHeader>
@@ -23,7 +23,7 @@ export const AcceptanceCount = async () => {
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="min-h-[40vh]">
+      <CardContent className="min-h-[40vh] h-[40vh]">
         <AcceptanceCountChart data={acceptance}></AcceptanceCountChart>
       </CardContent>
       <CardFooter>

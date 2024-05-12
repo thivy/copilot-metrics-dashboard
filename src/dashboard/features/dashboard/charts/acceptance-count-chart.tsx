@@ -6,7 +6,7 @@ export const AcceptanceCountChart = (props: { data: BarDatum[] }) => {
     <ResponsiveBar
       data={props.data}
       keys={["total_lines_accepted", "total_lines_suggested"]}
-      indexBy="day"
+      indexBy="dayAndMonth"
       groupMode="grouped"
       margin={{ top: 10, right: 3, bottom: 35, left: 40 }}
       padding={0.3}

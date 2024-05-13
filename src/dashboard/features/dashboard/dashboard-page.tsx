@@ -2,6 +2,7 @@ import { getData } from "./api-data";
 import { AcceptanceCount } from "./charts/acceptance-count";
 import { AcceptanceRate } from "./charts/acceptance-rate";
 import { AcceptanceSuggestionsCount } from "./charts/acceptance-suggestions-count";
+import { Editor } from "./charts/editor";
 import { Language } from "./charts/language";
 import { DashboardProvider } from "./dashboard-state";
 import { ComboboxPopover, Header } from "./header";
@@ -40,7 +41,7 @@ export default async function Dashboard() {
             <AcceptanceCount />
             <AcceptanceRate />
             <AcceptanceSuggestionsCount />
-            <Language /> <Language />
+            <Language /> <Editor />
           </div>
         </div>
       </main>

@@ -1,6 +1,7 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { ResponsivePie } from "@nivo/pie";
+import { useLanguageData } from "../dashboard-state";
 
 export interface LanguageChartData {
   id: string;
@@ -8,7 +9,8 @@ export interface LanguageChartData {
   value: number;
 }
 
-export const LanguageChart = ({ data }: { data: LanguageChartData[] }) => {
+export const LanguageChart = () => {
+  const data = useLanguageData();
   return (
     <div className="w-full h-full flex flex-col gap-4 ">
       <div className="min-h-[40vh] h-[40vh]">

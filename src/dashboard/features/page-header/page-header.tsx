@@ -5,7 +5,7 @@ interface Props extends PropsWithChildren {}
 export const PageHeader = (props: Props) => {
   return (
     <div className="bg-background py-8 border-b">
-      <div className="mx-auto grid grid-cols-2 w-full max-w-6xl gap-2 container">
+      <div className="mx-auto flex flex-col w-full max-w-6xl gap-2 container">
         {props.children}
       </div>
     </div>

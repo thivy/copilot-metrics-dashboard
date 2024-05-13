@@ -34,30 +34,6 @@ export const getData = cache(async (): Promise<APIResponse[]> => {
   return promise;
 });
 
-export const getLanguageData = async () => {
-  const allData = await getData();
-  const languages: Array<LanguageChartData> = [];
-
-  allData.forEach((item) => {
-    item.breakdown.forEach((breakdown) => {
-      const { language } = breakdown;
-      const languageToEdit = languages.find((e) => e.id === language);
-
-      if (languageToEdit) {
-        languageToEdit.value += breakdown.active_users;
-        return;
-      }
-      languages.push({
-        id: language,
-        name: language,
-        value: breakdown.active_users,
-      });
-    });
-  });
-
-  return languages;
-};
-
 export const getIDEData = async () => {
   const allData = await getData();
   const editors: Array<LanguageChartData> = [];

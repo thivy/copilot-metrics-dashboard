@@ -12,7 +12,6 @@ import { Legend } from "./language-chart";
 
 export const AcceptanceCount = async () => {
   const acceptance = await getAcceptanceCount();
-  console.log(acceptance);
   return (
     <Card className="col-span-4">
       <CardHeader>

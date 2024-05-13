@@ -1,10 +1,13 @@
 "use client";
-import { BarDatum, ResponsiveBar } from "@nivo/bar";
+import { ResponsiveBar } from "@nivo/bar";
+import { formatDate } from "../api-data";
+import { useDashboardData } from "../dashboard-state";
 
-export const AcceptanceCountChart = (props: { data: BarDatum[] }) => {
+export const AcceptanceCountChart = () => {
+  const data = useData();
   return (
     <ResponsiveBar
-      data={props.data}
+      data={data}
       keys={["total_lines_accepted", "total_lines_suggested"]}
       indexBy="dayAndMonth"
       groupMode="grouped"
@@ -22,3 +25,19 @@ export const AcceptanceCountChart = (props: { data: BarDatum[] }) => {
     />
   );
 };
+
+export function useData() {
+  const { data } = useDashboardData();
+  const rates = data.map((item) => {
+    const { total_lines_accepted, total_lines_suggested, day } = item;
+
+    return {
+      total_lines_accepted,
+      total_lines_suggested,
+      day,
+      dayAndMonth: formatDate(day),
+    };
+  });
+
+  return rates;
+}

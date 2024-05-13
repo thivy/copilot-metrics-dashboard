@@ -65,38 +65,6 @@ export const formatDate = (date: string) => {
   });
 };
 
-export const getAcceptanceCount = async () => {
-  const allData = await getData();
-  const rates = allData.map((item) => {
-    const { total_lines_accepted, total_lines_suggested, day } = item;
-
-    return {
-      total_lines_accepted,
-      total_lines_suggested,
-      day,
-      dayAndMonth: formatDate(day),
-    };
-  });
-
-  return rates;
-};
-
-export const getAcceptanceRates = async () => {
-  const allData = await getData();
-  const rates = allData.map((item) => {
-    const { total_lines_accepted, total_lines_suggested, day } = item;
-    const completionAcceptanceRate =
-      Math.round((total_lines_accepted / total_lines_suggested) * 100 * 100) /
-      100;
-    return {
-      completionAcceptanceRate,
-      day,
-    };
-  });
-
-  return rates;
-};
-
 export const data = [
   {
     total_suggestions_count: 8312,

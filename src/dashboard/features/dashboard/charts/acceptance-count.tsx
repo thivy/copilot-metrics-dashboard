@@ -6,12 +6,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getAcceptanceCount } from "../api-data";
 import { AcceptanceCountChart } from "./acceptance-count-chart";
 import { Legend } from "./language-chart";
 
 export const AcceptanceCount = async () => {
-  const acceptance = await getAcceptanceCount();
   return (
     <Card className="col-span-4">
       <CardHeader>
@@ -23,7 +21,7 @@ export const AcceptanceCount = async () => {
       </CardHeader>
 
       <CardContent className="min-h-[40vh] h-[40vh]">
-        <AcceptanceCountChart data={acceptance}></AcceptanceCountChart>
+        <AcceptanceCountChart></AcceptanceCountChart>
       </CardContent>
       <CardFooter>
         <div className="flex gap-4 py-2 text-xs">

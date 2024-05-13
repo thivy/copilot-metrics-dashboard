@@ -5,27 +5,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Serie } from "@nivo/line";
-import { getAcceptanceRates } from "../api-data";
 import { AcceptanceRateChart } from "./acceptance-rate-chart";
 
 export const AcceptanceRate = async () => {
-  const acceptance = await getAcceptanceRates();
-
-  const completion = acceptance.map((item) => {
-    return {
-      x: item.day,
-      y: item.completionAcceptanceRate,
-    };
-  });
-
-  const data: Serie[] = [
-    {
-      id: "completion",
-      data: completion,
-    },
-  ];
-
   return (
     <Card className="col-span-4">
       <CardHeader>
@@ -36,7 +18,7 @@ export const AcceptanceRate = async () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="h-[40dvh]">
-        <AcceptanceRateChart data={data}></AcceptanceRateChart>
+        <AcceptanceRateChart></AcceptanceRateChart>
       </CardContent>
     </Card>
   );

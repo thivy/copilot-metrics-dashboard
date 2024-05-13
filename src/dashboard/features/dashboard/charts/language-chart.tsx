@@ -1,7 +1,7 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { ResponsivePie } from "@nivo/pie";
-import { useLanguageData } from "../dashboard-state";
+import { useDashboardData } from "../dashboard-state";
 
 export interface LanguageChartData {
   id: string;
@@ -56,3 +56,27 @@ export const Legend = ({
     </div>
   );
 };
+
+export function useLanguageData() {
+  const { data } = useDashboardData();
+  const languages: Array<LanguageChartData> = [];
+
+  data.forEach((item) => {
+    item.breakdown.forEach((breakdown) => {
+      const { language } = breakdown;
+      const languageToEdit = languages.find((e) => e.id === language);
+
+      if (languageToEdit) {
+        languageToEdit.value += breakdown.active_users;
+        return;
+      }
+      languages.push({
+        id: language,
+        name: language,
+        value: breakdown.active_users,
+      });
+    });
+  });
+
+  return languages;
+}

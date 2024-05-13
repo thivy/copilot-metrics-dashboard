@@ -7,7 +7,6 @@ import {
   useEffect,
   useState,
 } from "react";
-import { LanguageChartData } from "./charts/language-chart";
 
 interface State {
   data: APIResponse[];
@@ -64,22 +63,17 @@ const DashboardProvider: React.FC<IProps> = ({ children, apiData }: IProps) => {
   }, [languages, editors, response]);
 
   const filterLanguage = (language: string) => {
-    if (!languages.includes(language)) {
-      setLanguages((data) => [...data, language]);
-    }
+    setLanguages((prevLanguages) =>
+      prevLanguages.includes(language)
+        ? prevLanguages
+        : [...prevLanguages, language]
+    );
   };
 
   const filterEditor = (editor: string) => {
-    if (!editors.includes(editor)) {
-      response.forEach((item) => {
-        const filtered = item.breakdown.filter(
-          (breakdown) => breakdown.editor === editor
-        );
-        setData([...data, { ...item, breakdown: filtered }]);
-      });
-
-      setEditors([...editors, editor]);
-    }
+    setEditors((prevEditors) =>
+      prevEditors.includes(editor) ? prevEditors : [...prevEditors, editor]
+    );
   };
 
   return (
@@ -102,30 +96,6 @@ function useDashboardData() {
     throw new Error("useCount must be used within a CountProvider");
   }
   return context;
-}
-
-export function useLanguageData() {
-  const { data } = useDashboardData();
-  const languages: Array<LanguageChartData> = [];
-
-  data.forEach((item) => {
-    item.breakdown.forEach((breakdown) => {
-      const { language } = breakdown;
-      const languageToEdit = languages.find((e) => e.id === language);
-
-      if (languageToEdit) {
-        languageToEdit.value += breakdown.active_users;
-        return;
-      }
-      languages.push({
-        id: language,
-        name: language,
-        value: breakdown.active_users,
-      });
-    });
-  });
-
-  return languages;
 }
 
 export { DashboardProvider, useDashboardData };

@@ -10,7 +10,7 @@ export interface LanguageChartData {
 }
 
 export const LanguageChart = () => {
-  const data = useLanguageData();
+  const data = useData();
   return (
     <div className="w-full h-full flex flex-col gap-4 ">
       <div className="min-h-[40vh] h-[40vh]">
@@ -57,7 +57,7 @@ export const Legend = ({
   );
 };
 
-export function useLanguageData() {
+function useData() {
   const { data } = useDashboardData();
   const languages: Array<LanguageChartData> = [];
 

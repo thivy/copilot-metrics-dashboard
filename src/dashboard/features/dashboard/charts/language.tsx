@@ -11,10 +11,8 @@ export const Language = async () => {
   return (
     <Card className="col-span-2">
       <CardHeader>
-        <CardTitle>Acceptance rate</CardTitle>
-        <CardDescription>
-          Used to identify your store in the marketplace.
-        </CardDescription>
+        <CardTitle>Language</CardTitle>
+        <CardDescription>Number of active users per language</CardDescription>
       </CardHeader>
       <CardContent>
         <LanguageChart />

@@ -1,13 +1,7 @@
 "use client";
 import { ResponsivePie } from "@nivo/pie";
 import { useDashboardData } from "../dashboard-state";
-import { Legend } from "./language-chart";
-
-export interface EditorChartData {
-  id: string;
-  name: string;
-  value: number;
-}
+import { ListItems, PieChartData } from "./language-chart";
 
 export const EditorChart = () => {
   const data = useData();
@@ -33,10 +27,8 @@ export const EditorChart = () => {
           colors={{ scheme: "nivo" }}
         />
       </div>
-      <div className="flex gap-4 text-sm flex-wrap">
-        {data.map((d) => (
-          <Legend key={d.id} name={d.name} className="bg-green-200" />
-        ))}
+      <div className="flex flex-col gap-4 text-sm flex-wrap">
+        <ListItems items={data} />
       </div>
     </div>
   );
@@ -44,7 +36,7 @@ export const EditorChart = () => {
 
 function useData() {
   const { data } = useDashboardData();
-  const editors: Array<EditorChartData> = [];
+  const editors: Array<PieChartData> = [];
 
   data.forEach((item) => {
     item.breakdown.forEach((breakdown) => {

@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { ResponsivePie } from "@nivo/pie";
 import { useDashboardData } from "../dashboard-state";
 
-export interface LanguageChartData {
+export interface PieChartData {
   id: string;
   name: string;
   value: number;
@@ -33,10 +33,8 @@ export const LanguageChart = () => {
           colors={{ scheme: "nivo" }}
         />
       </div>
-      <div className="flex gap-4 text-sm flex-wrap">
-        {data.map((d) => (
-          <Legend key={d.id} name={d.name} className="bg-green-200" />
-        ))}
+      <div className="flex flex-col gap-4 text-sm flex-wrap">
+        <ListItems items={data} />
       </div>
     </div>
   );
@@ -57,9 +55,31 @@ export const Legend = ({
   );
 };
 
+import { ScrollArea } from "@/components/ui/scroll-area";
+
+export function ListItems(props: { items: PieChartData[] }) {
+  return (
+    <ScrollArea className="h-72 rounded-md">
+      <div className="gap-1 flex flex-col">
+        {props.items.map((item) => (
+          <div
+            className="px-4 py-2 text-sm flex items-center border-b border-muted"
+            key={item.name}
+          >
+            <span className="flex-1">{item.name}</span>
+            <span className="p-1 px-2 border bg-primary-foreground rounded-full text-xs">
+              {item.value}
+            </span>
+          </div>
+        ))}
+      </div>
+    </ScrollArea>
+  );
+}
+
 function useData() {
   const { data } = useDashboardData();
-  const languages: Array<LanguageChartData> = [];
+  const languages: Array<PieChartData> = [];
 
   data.forEach((item) => {
     item.breakdown.forEach((breakdown) => {
@@ -77,6 +97,8 @@ function useData() {
       });
     });
   });
+  // sort by value
+  languages.sort((a, b) => b.value - a.value);
 
   return languages;
 }

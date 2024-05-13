@@ -26,9 +26,10 @@ export const Header = () => {
   return (
     <PageHeader>
       <PageTitle>Dashboard</PageTitle>
-      <div className="flex">
+      <div className="flex gap-8">
         <DatePickerWithRange />
-        <ComboboxPopover />
+        <ComboboxPopover name="Language" />
+        <ComboboxPopover name="Editor" />
       </div>
     </PageHeader>
   );
@@ -62,7 +63,7 @@ const statuses: Status[] = [
   },
 ];
 
-export function ComboboxPopover() {
+export function ComboboxPopover({ name }: { name: string }) {
   const [open, setOpen] = React.useState(true);
   const [selectedStatus, setSelectedStatus] = React.useState<Status | null>(
     null
@@ -71,21 +72,13 @@ export function ComboboxPopover() {
   const { filterLanguage } = useDashboardData();
 
   return (
-    <div className="flex items-center space-x-4">
-      <p className="text-sm text-muted-foreground">Status</p>
-      <Button
-        onClick={() => {
-          filterLanguage("html");
-          filterLanguage("javascriptreact");
-        }}
-      >
-        ww
-      </Button>
+    <div className="flex items-center space-x-2">
+      <p className="text-xs text-muted-foreground">{name}</p>
+
       <Popover>
         <PopoverTrigger asChild>
           <Button variant="outline" size="sm" className="h-8 border-dashed">
-            <PlusCircledIcon className="mr-2 h-4 w-4" />
-            we
+            <PlusCircledIcon className="h-4 w-4" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[200px] p-0" align="start">

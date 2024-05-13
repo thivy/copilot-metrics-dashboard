@@ -5,7 +5,7 @@ import { AcceptanceSuggestionsCount } from "./charts/acceptance-suggestions-coun
 import { Editor } from "./charts/editor";
 import { Language } from "./charts/language";
 import { DashboardProvider } from "./dashboard-state";
-import { ComboboxPopover, Header } from "./header";
+import { Header } from "./header";
 import StatsCard from "./stats-card";
 
 export default async function Dashboard() {
@@ -14,7 +14,6 @@ export default async function Dashboard() {
     <DashboardProvider apiData={allData}>
       <main className="flex flex-1 flex-col gap-4 md:gap-8 pb-8">
         <Header />
-        <ComboboxPopover />
 
         <div className="mx-auto w-full max-w-6xl container">
           <div className="grid grid-cols-4 gap-6">

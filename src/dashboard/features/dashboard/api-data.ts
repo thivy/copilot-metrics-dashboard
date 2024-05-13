@@ -1,5 +1,4 @@
 import { cache } from "react";
-import { LanguageChartData } from "./charts/language-chart";
 
 export interface APIResponse {
   total_suggestions_count: number;
@@ -33,30 +32,6 @@ export const getData = cache(async (): Promise<APIResponse[]> => {
 
   return promise;
 });
-
-export const getIDEData = async () => {
-  const allData = await getData();
-  const editors: Array<LanguageChartData> = [];
-
-  allData.forEach((item) => {
-    item.breakdown.forEach((breakdown) => {
-      const { editor } = breakdown;
-      const editorToEdit = editors.find((e) => e.id === editor);
-
-      if (editorToEdit) {
-        editorToEdit.value += breakdown.active_users;
-        return;
-      }
-      editors.push({
-        id: editor,
-        name: editor,
-        value: breakdown.active_users,
-      });
-    });
-  });
-
-  return editors;
-};
 
 export const formatDate = (date: string) => {
   return new Date(date).toLocaleDateString("en-AU", {

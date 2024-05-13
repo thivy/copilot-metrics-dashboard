@@ -1,5 +1,6 @@
 "use client";
 import { ResponsiveLine, Serie } from "@nivo/line";
+import { formatDate } from "../api-data";
 import { useDashboardData } from "../dashboard-state";
 
 export const AcceptanceRateChart = () => {
@@ -53,11 +54,12 @@ function useData() {
     return {
       completionAcceptanceRate,
       day,
+      dayAndMonth: formatDate(day),
     };
   });
   const completion = rates.map((item) => {
     return {
-      x: item.day,
+      x: item.dayAndMonth,
       y: item.completionAcceptanceRate,
     };
   });

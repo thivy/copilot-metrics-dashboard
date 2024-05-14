@@ -11,30 +11,81 @@ import { APIResponse } from "./api-data";
 
 interface State {
   data: APIResponse[];
-  setData: (data: APIResponse[]) => void;
+  allLanguages: DropdownItem[];
+  allEditors: DropdownItem[];
   filterLanguage: (language: string) => void;
+  removeLanguage: (language: string) => void;
   filterEditor: (editor: string) => void;
+  removeEditor: (editor: string) => void;
+  resetAllFilters: () => void;
 }
 
 interface IProps extends PropsWithChildren {
   apiData: APIResponse[];
 }
 
+export interface DropdownItem {
+  name: string;
+  count: number;
+}
+
 const DashboardContext = createContext<State | undefined>(undefined);
+
+const uniqueLanguages = (response: APIResponse[]) => {
+  const languages: DropdownItem[] = [];
+  response.forEach((item) => {
+    item.breakdown.forEach((breakdown) => {
+      const index = languages.findIndex(
+        (language) => language.name === breakdown.language
+      );
+
+      if (index === -1) {
+        languages.push({ name: breakdown.language, count: 1 });
+      } else {
+        languages[index].count += 1;
+      }
+    });
+  });
+
+  return languages;
+};
+
+const uniqueEditors = (response: APIResponse[]) => {
+  const editors: DropdownItem[] = [];
+  response.forEach((item) => {
+    item.breakdown.forEach((breakdown) => {
+      const index = editors.findIndex(
+        (editor) => editor.name === breakdown.editor
+      );
+
+      if (index === -1) {
+        editors.push({ name: breakdown.editor, count: 1 });
+      } else {
+        editors[index].count += 1;
+      }
+    });
+  });
+
+  return editors;
+};
 
 const DashboardProvider: React.FC<IProps> = ({ children, apiData }: IProps) => {
   const [response, setResponse] = useState<APIResponse[]>(apiData);
-  const [data, _setData] = useState<APIResponse[]>(apiData);
+  const [data, setData] = useState<APIResponse[]>(apiData);
   const [languages, setLanguages] = useState<string[]>([]);
   const [editors, setEditors] = useState<string[]>([]);
+  const [allLanguages, _setLanguages] = useState<DropdownItem[]>(
+    uniqueLanguages(response)
+  );
 
-  const setData = (data: APIResponse[]) => {
-    _setData(data);
-  };
+  const [allEditors, _setAllEditors] = useState<DropdownItem[]>(
+    uniqueEditors(response)
+  );
 
   useEffect(() => {
     const applyFilters = () => {
-      const items: Array<APIResponse> = [...response];
+      // deep clone response including the breakdowns
+      const items = JSON.parse(JSON.stringify(response)) as Array<APIResponse>;
 
       if (languages.length !== 0) {
         items.forEach((item) => {
@@ -57,6 +108,7 @@ const DashboardProvider: React.FC<IProps> = ({ children, apiData }: IProps) => {
 
       // items with more than 0 breakdowns
       const filtered = items.filter((item) => item.breakdown.length > 0);
+
       setData(filtered);
     };
 
@@ -71,19 +123,40 @@ const DashboardProvider: React.FC<IProps> = ({ children, apiData }: IProps) => {
     );
   };
 
+  const removeLanguage = (language: string) => {
+    setLanguages((prevLanguages) =>
+      prevLanguages.filter((prevLanguage) => prevLanguage !== language)
+    );
+  };
+
   const filterEditor = (editor: string) => {
     setEditors((prevEditors) =>
       prevEditors.includes(editor) ? prevEditors : [...prevEditors, editor]
     );
   };
 
+  const removeEditor = (editor: string) => {
+    setEditors((prevEditors) =>
+      prevEditors.filter((prevEditor) => prevEditor !== editor)
+    );
+  };
+
+  const resetAllFilters = () => {
+    setLanguages([]);
+    setEditors([]);
+  };
+
   return (
     <DashboardContext.Provider
       value={{
         data,
-        setData,
+        allLanguages,
+        allEditors,
         filterLanguage,
+        removeLanguage,
         filterEditor,
+        removeEditor,
+        resetAllFilters,
       }}
     >
       {children}

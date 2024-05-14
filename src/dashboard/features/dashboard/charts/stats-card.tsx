@@ -20,7 +20,9 @@ export default function StatsCard(props: StatsCardProps) {
         <CardTitle className="text-4xl">{props.value}</CardTitle>
       </CardHeader>
       <CardFooter>
-        <CardDescription> {props.description}</CardDescription>
+        <CardDescription className="text-xs">
+          {props.description}
+        </CardDescription>
       </CardFooter>
     </Card>
   );

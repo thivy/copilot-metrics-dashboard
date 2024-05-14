@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { AcceptanceRateChart } from "./acceptance-rate-chart";
+import { AcceptanceRateChart } from "./acceptance-rate";
 
 export const AcceptanceSuggestionsCount = async () => {
   return (

@@ -13,11 +13,13 @@ interface State {
   data: APIResponse[];
   allLanguages: DropdownItem[];
   allEditors: DropdownItem[];
+  selectedLanguages: DropdownItem[];
+  selectedEditors: DropdownItem[];
   filterLanguage: (language: string) => void;
-  removeLanguage: (language: string) => void;
   filterEditor: (editor: string) => void;
-  removeEditor: (editor: string) => void;
   resetAllFilters: () => void;
+  editorIsSelected: (editor: string) => boolean;
+  languageIsSelected: (language: string) => boolean;
 }
 
 interface IProps extends PropsWithChildren {
@@ -72,8 +74,10 @@ const uniqueEditors = (response: APIResponse[]) => {
 const DashboardProvider: React.FC<IProps> = ({ children, apiData }: IProps) => {
   const [response, setResponse] = useState<APIResponse[]>(apiData);
   const [data, setData] = useState<APIResponse[]>(apiData);
-  const [languages, setLanguages] = useState<string[]>([]);
-  const [editors, setEditors] = useState<string[]>([]);
+  const [selectedLanguages, setSelectedLanguages] = useState<DropdownItem[]>(
+    []
+  );
+  const [selectedEditors, setSelectedEditors] = useState<DropdownItem[]>([]);
   const [allLanguages, _setLanguages] = useState<DropdownItem[]>(
     uniqueLanguages(response)
   );
@@ -82,25 +86,56 @@ const DashboardProvider: React.FC<IProps> = ({ children, apiData }: IProps) => {
     uniqueEditors(response)
   );
 
+  const filterEditor = (editor: string) => {
+    const index = selectedEditors.findIndex((l) => l.name === editor);
+
+    if (index === -1) {
+      const item = allEditors.find((l) => l.name === editor);
+      if (item) {
+        setSelectedEditors([...selectedEditors, item]);
+      }
+    } else {
+      setSelectedEditors(
+        selectedEditors.filter((item) => item.name !== editor)
+      );
+    }
+  };
+
+  const filterLanguage = (language: string) => {
+    const index = selectedLanguages.findIndex((l) => l.name === language);
+
+    if (index === -1) {
+      const item = allLanguages.find((l) => l.name === language);
+      if (item) {
+        setSelectedLanguages([...selectedLanguages, item]);
+      }
+    } else {
+      setSelectedLanguages(
+        selectedLanguages.filter((item) => item.name !== language)
+      );
+    }
+  };
+
   useEffect(() => {
     const applyFilters = () => {
       // deep clone response including the breakdowns
       const items = JSON.parse(JSON.stringify(response)) as Array<APIResponse>;
 
-      if (languages.length !== 0) {
+      if (selectedLanguages.length !== 0) {
         items.forEach((item) => {
           const filtered = item.breakdown.filter((breakdown) =>
-            languages.includes(breakdown.language)
+            selectedLanguages.some(
+              (selectedLanguage) => selectedLanguage.name === breakdown.language
+            )
           );
-
           item.breakdown = filtered;
         });
       }
 
-      if (editors.length !== 0) {
+      if (selectedEditors.length !== 0) {
         items.forEach((item) => {
           const filtered = item.breakdown.filter((breakdown) =>
-            editors.includes(breakdown.editor)
+            selectedEditors.some((editor) => editor.name === breakdown.editor)
           );
           item.breakdown = filtered;
         });
@@ -113,37 +148,19 @@ const DashboardProvider: React.FC<IProps> = ({ children, apiData }: IProps) => {
     };
 
     applyFilters();
-  }, [languages, editors, response]);
-
-  const filterLanguage = (language: string) => {
-    setLanguages((prevLanguages) =>
-      prevLanguages.includes(language)
-        ? prevLanguages
-        : [...prevLanguages, language]
-    );
-  };
-
-  const removeLanguage = (language: string) => {
-    setLanguages((prevLanguages) =>
-      prevLanguages.filter((prevLanguage) => prevLanguage !== language)
-    );
-  };
-
-  const filterEditor = (editor: string) => {
-    setEditors((prevEditors) =>
-      prevEditors.includes(editor) ? prevEditors : [...prevEditors, editor]
-    );
-  };
-
-  const removeEditor = (editor: string) => {
-    setEditors((prevEditors) =>
-      prevEditors.filter((prevEditor) => prevEditor !== editor)
-    );
-  };
+  }, [selectedLanguages, selectedEditors, response]);
 
   const resetAllFilters = () => {
-    setLanguages([]);
-    setEditors([]);
+    setSelectedLanguages([]);
+    setSelectedEditors([]);
+  };
+
+  const editorIsSelected = (editor: string) => {
+    return selectedEditors.some((item) => item.name === editor);
+  };
+
+  const languageIsSelected = (language: string) => {
+    return selectedLanguages.some((item) => item.name === language);
   };
 
   return (
@@ -152,11 +169,13 @@ const DashboardProvider: React.FC<IProps> = ({ children, apiData }: IProps) => {
         data,
         allLanguages,
         allEditors,
+        selectedLanguages,
+        selectedEditors,
         filterLanguage,
-        removeLanguage,
         filterEditor,
-        removeEditor,
         resetAllFilters,
+        editorIsSelected,
+        languageIsSelected,
       }}
     >
       {children}

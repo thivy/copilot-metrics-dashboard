@@ -1,20 +1,19 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import React from "react";
-import { DropdownItem, useDashboardData } from "../dashboard-state";
+import { useDashboardData } from "../dashboard-state";
 import { DropdownFilter } from "./dropdown-filter";
 
 export function ComboboxPopover() {
-  const { onEditorSelected, editorIsSelected, selectedEditors, allEditors } =
-    useEditorSelection();
+  const { selectedEditors, filterEditor, allEditors, editorIsSelected } =
+    useDashboardData();
 
   const {
-    onLanguageSelected,
-    languageIsSelected,
+    selectedLanguages,
+    filterLanguage,
     allLanguages,
-    selectedItems,
-  } = useLanguageSelection();
+    languageIsSelected,
+  } = useDashboardData();
 
   const { resetAllFilters } = useDashboardData();
 
@@ -24,14 +23,14 @@ export function ComboboxPopover() {
         name={"Language"}
         allItems={allLanguages}
         itemIsSelected={languageIsSelected}
-        onSelect={onLanguageSelected}
-        selectedItems={selectedItems}
+        onSelect={filterLanguage}
+        selectedItems={selectedLanguages}
       />
       <DropdownFilter
         name={"Editor"}
         allItems={allEditors}
         itemIsSelected={editorIsSelected}
-        onSelect={onEditorSelected}
+        onSelect={filterEditor}
         selectedItems={selectedEditors}
       />
       <Button variant={"secondary"} onClick={() => resetAllFilters()}>
@@ -40,70 +39,3 @@ export function ComboboxPopover() {
     </div>
   );
 }
-
-// Hook for editor selection
-export const useEditorSelection = () => {
-  const [selectedEditors, setSelectedEditors] = React.useState<DropdownItem[]>(
-    []
-  );
-  const { filterEditor, removeEditor, allEditors } = useDashboardData();
-
-  const onEditorSelected = (editor: string) => {
-    const index = selectedEditors.findIndex((l) => l.name === editor);
-
-    if (index === -1) {
-      const item = allEditors.find((l) => l.name === editor);
-      if (item) {
-        setSelectedEditors([...selectedEditors, item]);
-        filterEditor(editor);
-      }
-    } else {
-      setSelectedEditors(
-        selectedEditors.filter((item) => item.name !== editor)
-      );
-      removeEditor(editor);
-    }
-  };
-
-  const editorIsSelected = (editor: string) => {
-    return selectedEditors.some((item) => item.name === editor);
-  };
-
-  return { onEditorSelected, editorIsSelected, selectedEditors, allEditors };
-};
-
-// Hook for language selection
-export const useLanguageSelection = () => {
-  const [selectedLanguages, setSelectedLanguages] = React.useState<
-    DropdownItem[]
-  >([]);
-  const { filterLanguage, removeLanguage, allLanguages } = useDashboardData();
-
-  const onLanguageSelected = (language: string) => {
-    const index = selectedLanguages.findIndex((l) => l.name === language);
-
-    if (index === -1) {
-      const item = allLanguages.find((l) => l.name === language);
-      if (item) {
-        setSelectedLanguages([...selectedLanguages, item]);
-        filterLanguage(language);
-      }
-    } else {
-      setSelectedLanguages(
-        selectedLanguages.filter((item) => item.name !== language)
-      );
-      removeLanguage(language);
-    }
-  };
-
-  const languageIsSelected = (language: string) => {
-    return selectedLanguages.some((item) => item.name === language);
-  };
-
-  return {
-    onLanguageSelected,
-    languageIsSelected,
-    allLanguages,
-    selectedItems: selectedLanguages,
-  };
-};

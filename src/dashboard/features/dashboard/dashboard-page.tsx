@@ -1,10 +1,10 @@
 import { getData } from "./api-data";
-import { AcceptanceCount } from "./charts/acceptance-count";
 import { AcceptanceRate } from "./charts/acceptance-rate";
-import { AcceptanceSuggestionsCount } from "./charts/acceptance-suggestions-count";
 import { Editor } from "./charts/editor";
 import { Language } from "./charts/language";
 import { Stats } from "./charts/stats";
+import { TotalCodeLineSuggestionsAndAcceptances } from "./charts/total-code-line-suggestions-and-acceptances";
+import { TotalSuggestionsAndAcceptances } from "./charts/total-suggestions-and-acceptances";
 import { DashboardProvider } from "./dashboard-state";
 import { Header } from "./header";
 
@@ -18,9 +18,9 @@ export default async function Dashboard() {
         <div className="mx-auto w-full max-w-6xl container">
           <div className="grid grid-cols-4 gap-6">
             <Stats />
-            <AcceptanceCount />
             <AcceptanceRate />
-            <AcceptanceSuggestionsCount />
+            <TotalCodeLineSuggestionsAndAcceptances />
+            <TotalSuggestionsAndAcceptances />
             <Language /> <Editor />
           </div>
         </div>

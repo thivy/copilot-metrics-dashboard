@@ -34,7 +34,7 @@ export const AcceptanceRateChart = () => {
     <ResponsiveLine
       data={data}
       curve="catmullRom"
-      margin={{ top: 40, right: 10, bottom: 80, left: 45 }}
+      margin={{ top: 10, right: 10, bottom: 40, left: 45 }}
       xScale={{ type: "point" }}
       yScale={{
         type: "linear",
@@ -79,14 +79,13 @@ function useData() {
 
     item.breakdown.forEach((breakdown) => {
       total_lines_accepted += breakdown.lines_accepted;
-      total_lines_suggested += breakdown.suggestions_count;
+      total_lines_suggested += breakdown.lines_suggested;
     });
 
     const completionAcceptanceRate =
-      Math.round((total_lines_accepted / total_lines_suggested) * 100 * 100) /
-      100;
+      (total_lines_accepted / total_lines_suggested) * 100;
     return {
-      completionAcceptanceRate,
+      completionAcceptanceRate: completionAcceptanceRate.toFixed(2),
       day,
       dayAndMonth: formatDate(day),
     };

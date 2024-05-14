@@ -1,3 +1,4 @@
+"use client";
 import {
   Card,
   CardContent,
@@ -7,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { AcceptanceRateChart } from "./acceptance-rate";
 
-export const AcceptanceSuggestionsCount = async () => {
+export const AcceptanceSuggestionsCount = () => {
   return (
     <Card className="col-span-4">
       <CardHeader>

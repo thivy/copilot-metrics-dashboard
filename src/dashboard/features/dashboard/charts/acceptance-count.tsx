@@ -12,7 +12,7 @@ import { formatDate } from "../api-data";
 import { useDashboardData } from "../dashboard-state";
 import { Legend } from "./chat-legend";
 
-export const AcceptanceCount = async () => {
+export const AcceptanceCount = () => {
   return (
     <Card className="col-span-4">
       <CardHeader>
@@ -62,7 +62,15 @@ export const AcceptanceCountChart = () => {
 export function useData() {
   const { data } = useDashboardData();
   const rates = data.map((item) => {
-    const { total_lines_accepted, total_lines_suggested, day } = item;
+    const { day } = item;
+
+    let total_lines_accepted = 0;
+    let total_lines_suggested = 0;
+
+    item.breakdown.forEach((breakdown) => {
+      total_lines_accepted += breakdown.lines_accepted;
+      total_lines_suggested += breakdown.suggestions_count;
+    });
 
     return {
       total_lines_accepted,

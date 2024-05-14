@@ -10,7 +10,7 @@ import {
 import { ResponsivePie } from "@nivo/pie";
 import { useDashboardData } from "../dashboard-state";
 
-export const Language = async () => {
+export const Language = () => {
   return (
     <Card className="col-span-2">
       <CardHeader>

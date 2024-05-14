@@ -11,7 +11,7 @@ import { ResponsiveLine, Serie } from "@nivo/line";
 import { formatDate } from "../api-data";
 import { useDashboardData } from "../dashboard-state";
 
-export const AcceptanceRate = async () => {
+export const AcceptanceRate = () => {
   return (
     <Card className="col-span-4">
       <CardHeader>
@@ -72,7 +72,16 @@ function useData() {
   const { data } = useDashboardData();
 
   const rates = data.map((item) => {
-    const { total_lines_accepted, total_lines_suggested, day } = item;
+    const { day } = item;
+
+    let total_lines_accepted = 0;
+    let total_lines_suggested = 0;
+
+    item.breakdown.forEach((breakdown) => {
+      total_lines_accepted += breakdown.lines_accepted;
+      total_lines_suggested += breakdown.suggestions_count;
+    });
+
     const completionAcceptanceRate =
       Math.round((total_lines_accepted / total_lines_suggested) * 100 * 100) /
       100;
@@ -82,6 +91,7 @@ function useData() {
       dayAndMonth: formatDate(day),
     };
   });
+
   const completion = rates.map((item) => {
     return {
       x: item.dayAndMonth,

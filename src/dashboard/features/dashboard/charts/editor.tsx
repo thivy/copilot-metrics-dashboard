@@ -11,7 +11,7 @@ import { ResponsivePie } from "@nivo/pie";
 import { useDashboardData } from "../dashboard-state";
 import { ListItems, PieChartData } from "./language";
 
-export const Editor = async () => {
+export const Editor = () => {
   return (
     <Card className="col-span-2">
       <CardHeader>

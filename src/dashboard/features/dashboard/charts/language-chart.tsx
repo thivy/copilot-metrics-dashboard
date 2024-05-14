@@ -1,5 +1,4 @@
 "use client";
-import { cn } from "@/lib/utils";
 import { ResponsivePie } from "@nivo/pie";
 import { useDashboardData } from "../dashboard-state";
 
@@ -36,21 +35,6 @@ export const LanguageChart = () => {
       <div className="flex flex-col gap-4 text-sm flex-wrap">
         <ListItems items={data} />
       </div>
-    </div>
-  );
-};
-
-export const Legend = ({
-  className,
-  name,
-}: {
-  name: string;
-  className: string;
-}) => {
-  return (
-    <div className="flex gap-2 items-center">
-      <div className={cn("w-4 h-4 rounded-full", className)}></div>
-      <div>{name}</div>
     </div>
   );
 };

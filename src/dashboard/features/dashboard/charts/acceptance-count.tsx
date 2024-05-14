@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { AcceptanceCountChart } from "./acceptance-count-chart";
-import { Legend } from "./language-chart";
+import { Legend } from "./chat-legend";
 
 export const AcceptanceCount = async () => {
   return (

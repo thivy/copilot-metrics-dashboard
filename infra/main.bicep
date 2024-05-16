@@ -9,6 +9,22 @@ param name string
 @description('Primary location for all resources')
 param location string
 
+@secure()
+@description('PAT to call Github API')
+param githubToken string
+
+@description('Type of Github account (organisation or enterprise)')
+@allowed([
+  'organisation'
+  'enterprise'
+])
+param githubAccountType string
+
+@description('Name of Githubn organisation or enterprise')
+param githubAccountName string
+
+@description('True to use test data, false to use real data')
+param useTestData bool
 
 param resourceGroupName string = ''
 
@@ -30,6 +46,10 @@ module resources 'resources.bicep' = {
     resourceToken: resourceToken
     tags: tags
     location: location
+    useTestData: useTestData
+    githubToken: githubToken
+    githubAccountType: githubAccountType
+    githubAccountName: githubAccountName
   }
 }
 

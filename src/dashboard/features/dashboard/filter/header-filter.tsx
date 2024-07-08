@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useDashboardData } from "../dashboard-state";
 import { DropdownFilter } from "./dropdown-filter";
 
-export function ComboboxPopover() {
+export function Filters() {
   const { selectedEditors, filterEditor, allEditors, editorIsSelected } =
     useDashboardData();
 

@@ -3,23 +3,27 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { formatDate } from "../api-data";
 import { useDashboardData } from "../dashboard-state";
-import { Legend } from "./chat-legend";
 
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import {
   ChartConfig,
   ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+
 export const TotalCodeLineSuggestionsAndAcceptances = () => {
+  const data = useData();
+  const config = chartConfig();
+
   return (
     <Card className="col-span-4">
       <CardHeader>
@@ -29,63 +33,85 @@ export const TotalCodeLineSuggestionsAndAcceptances = () => {
           the total number of lines of code completions accepted by users.
         </CardDescription>
       </CardHeader>
-      <CardContent className="">
-        <TotalCodeLineSuggestionsAndAcceptancesChart />
+      <CardContent>
+        <ChartContainer config={config.config} className="w-full h-80">
+          <BarChart
+            accessibilityLayer
+            data={data}
+            margin={{
+              left: 0,
+              right: 0,
+              bottom: 0,
+            }}
+          >
+            <CartesianGrid vertical={false} />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              allowDataOverflow
+            />
+            <XAxis
+              dataKey={config.dayAndMonth}
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              minTickGap={32}
+            />
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent indicator="dashed" />}
+            />
+            <Bar
+              dataKey={config.totalLinesSuggested}
+              fill="hsl(var(--chart-2))"
+              radius={4}
+            />{" "}
+            <Bar
+              dataKey={config.totalLinesAccepted}
+              fill="hsl(var(--chart-1))"
+              radius={4}
+            />
+            <ChartLegend content={<ChartLegendContent />} />
+          </BarChart>
+        </ChartContainer>
       </CardContent>
-      <CardFooter>
-        <div className="flex gap-4 py-2 text-xs">
-          <Legend name="Lines suggested" className="bg-[#F47560]" />
-          <Legend name="Lines accepted" className="bg-[#E8C1A0]" />
-        </div>
-      </CardFooter>
     </Card>
   );
 };
 
-const chartConfig = {
-  desktop: {
-    label: "total lines accepted",
-    color: "hsl(var(--chart-1))",
-  },
-  mobile: {
-    label: "total lines suggested",
-    color: "hsl(var(--chart-2))",
-  },
-} satisfies ChartConfig;
+const chartConfig = () => {
+  const totalLinesAccepted: DataKey = "totalLinesAccepted";
+  const totalLinesSuggested: DataKey = "totalLinesSuggested";
+  const dayAndMonth: DataKey = "dayAndMonth";
 
-export function TotalCodeLineSuggestionsAndAcceptancesChart() {
-  const data = useData();
-  return (
-    <ChartContainer config={chartConfig} className="w-full h-80">
-      <BarChart accessibilityLayer data={data}>
-        <CartesianGrid vertical={false} />
-        <XAxis
-          dataKey="day"
-          tickLine={false}
-          tickMargin={10}
-          axisLine={false}
-          tickFormatter={(value) => value.slice(0, 3)}
-        />
-        <ChartTooltip
-          cursor={false}
-          content={<ChartTooltipContent indicator="dashed" />}
-        />
-        <Bar
-          dataKey="total lines accepted"
-          fill="var(--color-desktop)"
-          radius={4}
-        />
-        <Bar
-          dataKey="total lines suggested"
-          fill="var(--color-mobile)"
-          radius={4}
-        />
-      </BarChart>
-    </ChartContainer>
-  );
+  const config = {
+    [totalLinesAccepted]: {
+      label: "Total lines accepted",
+    },
+    [totalLinesSuggested]: {
+      label: "Total lines suggested",
+    },
+  } satisfies ChartConfig;
+
+  return {
+    config,
+    dayAndMonth,
+    totalLinesAccepted,
+    totalLinesSuggested,
+  };
+};
+
+interface Data {
+  totalLinesAccepted: number;
+  totalLinesSuggested: number;
+  day: string;
+  dayAndMonth: string;
 }
 
-export function useData() {
+type DataKey = keyof Data;
+
+export function useData(): Data[] {
   const { data } = useDashboardData();
   const rates = data.map((item) => {
     const { day } = item;
@@ -99,8 +125,8 @@ export function useData() {
     });
 
     return {
-      "total lines accepted": total_lines_accepted,
-      "total lines suggested": total_lines_suggested,
+      totalLinesAccepted: total_lines_accepted,
+      totalLinesSuggested: total_lines_suggested,
       day,
       dayAndMonth: formatDate(day),
     };

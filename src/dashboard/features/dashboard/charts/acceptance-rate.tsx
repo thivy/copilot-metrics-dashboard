@@ -14,14 +14,15 @@ import { useDashboardData } from "../dashboard-state";
 import {
   ChartConfig,
   ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
 export const AcceptanceRate = () => {
   const data = useData();
-  const xAxisLabel: DataKey = "completionAcceptanceRate";
-  const yAxisLabel: DataKey = "dayAndMonth";
+  const config = chartConfig();
 
   return (
     <Card className="col-span-4">
@@ -33,29 +34,29 @@ export const AcceptanceRate = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-80 w-full">
+        <ChartContainer config={config.config} className="h-80 w-full">
           <AreaChart
             accessibilityLayer
             data={data}
             margin={{
               left: -20,
-              right: 20,
-              bottom: 25,
+              right: 0,
+              bottom: 0,
             }}
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey={yAxisLabel}
-              tickLine={false}
-              axisLine={false}
-              tickMargin={25}
-              angle={-70}
-            />
-            <YAxis
+              dataKey={config.completionAcceptanceRate}
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tickCount={3}
+              minTickGap={32}
+            />
+            <YAxis
+              dataKey={config.dayAndMonth}
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
               allowDataOverflow
               domain={[0, 100]}
             />
@@ -64,12 +65,13 @@ export const AcceptanceRate = () => {
               content={<ChartTooltipContent indicator="line" />}
             />
             <Area
-              dataKey={xAxisLabel}
+              dataKey={config.completionAcceptanceRate}
               type="natural"
               fill="hsl(var(--chart-1))"
               fillOpacity={0.4}
               stroke="hsl(var(--chart-1))"
             />
+            <ChartLegend content={<ChartLegendContent />} />
           </AreaChart>
         </ChartContainer>
       </CardContent>
@@ -77,11 +79,24 @@ export const AcceptanceRate = () => {
   );
 };
 
-const chartConfig = {
-  completionAcceptanceRate: {
-    label: "Acceptance rate (%) ",
-  },
-} satisfies ChartConfig;
+const chartConfig = () => {
+  const completionAcceptanceRate: DataKey = "completionAcceptanceRate";
+  const day: DataKey = "day";
+  const dayAndMonth: DataKey = "dayAndMonth";
+
+  const config = {
+    completionAcceptanceRate: {
+      label: "Acceptance rate (%) ",
+    },
+  } satisfies ChartConfig;
+
+  return {
+    config,
+    dayAndMonth,
+    completionAcceptanceRate,
+    day,
+  };
+};
 
 interface Data {
   day: string;

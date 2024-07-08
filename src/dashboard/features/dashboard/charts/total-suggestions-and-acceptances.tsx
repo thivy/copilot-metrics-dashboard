@@ -3,24 +3,26 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { formatDate } from "../api-data";
 import { useDashboardData } from "../dashboard-state";
-import { Legend } from "./chat-legend";
 
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import {
   ChartConfig,
   ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
 export const TotalSuggestionsAndAcceptances = () => {
+  const data = useData();
+  const config = chartConfig();
   return (
     <Card className="col-span-4">
       <CardHeader>
@@ -31,78 +33,92 @@ export const TotalSuggestionsAndAcceptances = () => {
           users.
         </CardDescription>
       </CardHeader>
-      <CardContent className="">
-        <TotalSuggestionsAndAcceptancesChart />
+      <CardContent>
+        <ChartContainer config={config.config} className="w-full h-80">
+          <BarChart accessibilityLayer data={data}>
+            <CartesianGrid vertical={false} />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              allowDataOverflow
+            />
+            <XAxis
+              dataKey={config.dayAndMonth}
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              minTickGap={32}
+            />
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent indicator="dashed" />}
+            />
+            <Bar
+              dataKey={config.totalSuggestionsCount}
+              fill="hsl(var(--chart-2))"
+              radius={4}
+            />
+            <Bar
+              dataKey={config.totalAcceptancesCount}
+              fill="hsl(var(--chart-1))"
+              radius={4}
+            />
+            <ChartLegend content={<ChartLegendContent />} />
+          </BarChart>
+        </ChartContainer>
       </CardContent>
-      <CardFooter>
-        <div className="flex gap-4 py-2 text-xs">
-          <Legend name="Code suggested" className="bg-[#F47560]" />
-          <Legend name="Code accepted" className="bg-[#E8C1A0]" />
-        </div>
-      </CardFooter>
     </Card>
   );
 };
 
-const chartConfig = {
-  desktop: {
-    label: "total acceptances count",
-    color: "hsl(var(--chart-1))",
-  },
-  mobile: {
-    label: "total suggestions count",
-    color: "hsl(var(--chart-2))",
-  },
-} satisfies ChartConfig;
+const chartConfig = () => {
+  const totalAcceptancesCount: DataKey = "totalAcceptancesCount";
+  const totalSuggestionsCount: DataKey = "totalSuggestionsCount";
+  const dayAndMonth: DataKey = "dayAndMonth";
 
-export function TotalSuggestionsAndAcceptancesChart() {
-  const data = useData();
-  return (
-    <ChartContainer config={chartConfig} className="w-full h-80">
-      <BarChart accessibilityLayer data={data}>
-        <CartesianGrid vertical={false} />
-        <XAxis
-          dataKey="day"
-          tickLine={false}
-          tickMargin={10}
-          axisLine={false}
-          tickFormatter={(value) => value.slice(0, 3)}
-        />
-        <ChartTooltip
-          cursor={false}
-          content={<ChartTooltipContent indicator="dashed" />}
-        />
-        <Bar
-          dataKey="total acceptances count"
-          fill="var(--color-desktop)"
-          radius={4}
-        />
-        <Bar
-          dataKey="total suggestions count"
-          fill="var(--color-mobile)"
-          radius={4}
-        />
-      </BarChart>
-    </ChartContainer>
-  );
+  const config = {
+    [totalAcceptancesCount]: {
+      label: "Total acceptances",
+    },
+    [totalSuggestionsCount]: {
+      label: "Total suggestions",
+    },
+  } satisfies ChartConfig;
+
+  return {
+    config,
+    dayAndMonth,
+    totalAcceptancesCount,
+    totalSuggestionsCount,
+  };
+};
+
+interface Data {
+  totalAcceptancesCount: number;
+  totalSuggestionsCount: number;
+  day: string;
+  dayAndMonth: string;
 }
 
-export function useData() {
+type DataKey = keyof Data;
+
+export function useData(): Data[] {
   const { data } = useDashboardData();
   const rates = data.map((item) => {
     const { day } = item;
 
-    let total_acceptances_count = 0;
-    let total_suggestions_count = 0;
+    let totalAcceptancesCount = 0;
+    let totalSuggestionsCount = 0;
 
     item.breakdown.forEach((breakdown) => {
-      total_acceptances_count += breakdown.acceptances_count;
-      total_suggestions_count += breakdown.suggestions_count;
+      totalAcceptancesCount += breakdown.acceptances_count;
+      totalSuggestionsCount += breakdown.suggestions_count;
     });
 
     return {
-      "total acceptances count": total_acceptances_count,
-      "total suggestions count": total_suggestions_count,
+      totalAcceptancesCount,
+      totalSuggestionsCount,
       day,
       dayAndMonth: formatDate(day),
     };

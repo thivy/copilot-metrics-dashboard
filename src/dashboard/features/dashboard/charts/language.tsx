@@ -106,7 +106,6 @@ function useData() {
         languageToEdit.value += breakdown.active_users;
         return;
       }
-      console.log(breakdown.active_users);
       languages.push({
         id: language,
         name: language,

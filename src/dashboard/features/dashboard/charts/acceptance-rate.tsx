@@ -55,7 +55,8 @@ export function AcceptanceRateChart() {
         data={data}
         margin={{
           left: -20,
-          right: 0,
+          right: 20,
+          bottom: 25,
         }}
       >
         <CartesianGrid vertical={false} />
@@ -63,9 +64,17 @@ export function AcceptanceRateChart() {
           dataKey={keys.date}
           tickLine={false}
           axisLine={false}
-          tickMargin={8}
+          tickMargin={25}
+          angle={-70}
         />
-        <YAxis tickLine={false} axisLine={false} tickMargin={8} tickCount={3} />
+        <YAxis
+          tickLine={false}
+          axisLine={false}
+          tickMargin={8}
+          tickCount={3}
+          allowDataOverflow
+          domain={[0, 100]}
+        />
         <ChartTooltip
           cursor={false}
           content={<ChartTooltipContent indicator="line" />}
@@ -88,18 +97,13 @@ function useData() {
   const rates = data.map((item) => {
     const { day } = item;
 
-    let total_lines_accepted = 0;
-    let total_lines_suggested = 0;
+    const rate =
+      item.total_lines_suggested !== 0
+        ? (item.total_lines_accepted / item.total_lines_suggested) * 100
+        : 0;
 
-    item.breakdown.forEach((breakdown) => {
-      total_lines_accepted += breakdown.lines_accepted;
-      total_lines_suggested += breakdown.lines_suggested;
-    });
-
-    const completionAcceptanceRate =
-      (total_lines_accepted / total_lines_suggested) * 100;
     return {
-      completionAcceptanceRate: completionAcceptanceRate.toFixed(2),
+      completionAcceptanceRate: rate.toFixed(2),
       day,
       dayAndMonth: formatDate(day),
     };

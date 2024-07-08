@@ -7,10 +7,17 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { ResponsivePie } from "@nivo/pie";
 import { useDashboardData } from "../dashboard-state";
 import { ListItems, PieChartData } from "./language";
 
+import { Pie, PieChart } from "recharts";
+
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
 export const Editor = () => {
   return (
     <Card className="col-span-2">
@@ -31,25 +38,26 @@ export const EditorChart = () => {
   const data = useData();
   return (
     <div className="w-full h-full flex flex-col gap-4 ">
-      <div className="min-h-[40vh] h-[40vh]">
-        <ResponsivePie
-          data={data}
-          sortByValue={true}
-          margin={{ top: 10, right: 0, bottom: 10, left: 0 }}
-          innerRadius={0.5}
-          padAngle={2}
-          cornerRadius={8}
-          activeOuterRadiusOffset={8}
-          borderWidth={1}
-          borderColor={{
-            from: "color",
-            modifiers: [["darker", 0.5]],
-          }}
-          enableArcLinkLabels={false}
-          enableArcLabels={true}
-          arcLabel={"name"}
-          colors={{ scheme: "nivo" }}
-        />
+      <div className="">
+        <ChartContainer
+          config={chartConfig}
+          className="mx-auto aspect-square max-h-[250px]"
+        >
+          <PieChart>
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel />}
+            />
+            <Pie
+              paddingAngle={1}
+              data={data}
+              dataKey="value"
+              nameKey="name"
+              innerRadius={40}
+              cornerRadius={5}
+            />
+          </PieChart>
+        </ChartContainer>
       </div>
       <div className="flex flex-col gap-4 text-sm flex-wrap">
         <ListItems items={data} />
@@ -57,6 +65,8 @@ export const EditorChart = () => {
     </div>
   );
 };
+
+const chartConfig = {} satisfies ChartConfig;
 
 function useData() {
   const { data } = useDashboardData();
@@ -76,9 +86,17 @@ function useData() {
         id: editor,
         name: editor,
         value: breakdown.active_users,
+        fill: ``,
       });
     });
   });
 
+  // sort by value
+  editors.sort((a, b) => b.value - a.value);
+
+  editors.forEach((editorData, index) => {
+    editorData.fill =
+      index < 4 ? `hsl(var(--chart-${index + 1}))` : `hsl(var(--chart-${5}))`;
+  });
   return editors;
 }

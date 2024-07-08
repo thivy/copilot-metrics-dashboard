@@ -7,10 +7,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ResponsiveBar } from "@nivo/bar";
 import { formatDate } from "../api-data";
 import { useDashboardData } from "../dashboard-state";
 import { Legend } from "./chat-legend";
+
+import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
 
 export const TotalSuggestionsAndAcceptances = () => {
   return (
@@ -23,8 +31,8 @@ export const TotalSuggestionsAndAcceptances = () => {
           users.
         </CardDescription>
       </CardHeader>
-      <CardContent className="min-h-[40vh] h-[40vh]">
-        <BarChart />
+      <CardContent className="">
+        <TotalSuggestionsAndAcceptancesChart />
       </CardContent>
       <CardFooter>
         <div className="flex gap-4 py-2 text-xs">
@@ -36,28 +44,48 @@ export const TotalSuggestionsAndAcceptances = () => {
   );
 };
 
-export const BarChart = () => {
+const chartConfig = {
+  desktop: {
+    label: "total acceptances count",
+    color: "hsl(var(--chart-1))",
+  },
+  mobile: {
+    label: "total suggestions count",
+    color: "hsl(var(--chart-2))",
+  },
+} satisfies ChartConfig;
+
+export function TotalSuggestionsAndAcceptancesChart() {
   const data = useData();
   return (
-    <ResponsiveBar
-      data={data}
-      keys={["total_acceptances_count", "total_suggestions_count"]}
-      indexBy="dayAndMonth"
-      groupMode="grouped"
-      margin={{ top: 10, right: 3, bottom: 35, left: 40 }}
-      padding={0.3}
-      enableLabel={false}
-      colors={{ scheme: "nivo" }}
-      axisBottom={{
-        tickSize: 5,
-        tickPadding: 5,
-        tickRotation: -30,
-        legendOffset: 62,
-        truncateTickAt: 0,
-      }}
-    />
+    <ChartContainer config={chartConfig} className="w-full h-80">
+      <BarChart accessibilityLayer data={data}>
+        <CartesianGrid vertical={false} />
+        <XAxis
+          dataKey="day"
+          tickLine={false}
+          tickMargin={10}
+          axisLine={false}
+          tickFormatter={(value) => value.slice(0, 3)}
+        />
+        <ChartTooltip
+          cursor={false}
+          content={<ChartTooltipContent indicator="dashed" />}
+        />
+        <Bar
+          dataKey="total acceptances count"
+          fill="var(--color-desktop)"
+          radius={4}
+        />
+        <Bar
+          dataKey="total suggestions count"
+          fill="var(--color-mobile)"
+          radius={4}
+        />
+      </BarChart>
+    </ChartContainer>
   );
-};
+}
 
 export function useData() {
   const { data } = useDashboardData();
@@ -73,8 +101,8 @@ export function useData() {
     });
 
     return {
-      total_acceptances_count,
-      total_suggestions_count,
+      "total acceptances count": total_acceptances_count,
+      "total suggestions count": total_suggestions_count,
       day,
       dayAndMonth: formatDate(day),
     };

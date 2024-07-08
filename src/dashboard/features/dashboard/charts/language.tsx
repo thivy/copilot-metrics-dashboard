@@ -7,9 +7,16 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { ResponsivePie } from "@nivo/pie";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useDashboardData } from "../dashboard-state";
 
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import { Pie, PieChart } from "recharts";
 export const Language = () => {
   return (
     <Card className="col-span-2">
@@ -28,31 +35,36 @@ export interface PieChartData {
   id: string;
   name: string;
   value: number;
+  fill: string;
 }
+
+const chartConfig = {} satisfies ChartConfig;
 
 export const LanguageChart = () => {
   const data = useData();
+
   return (
     <div className="w-full h-full flex flex-col gap-4 ">
-      <div className="min-h-[40vh] h-[40vh]">
-        <ResponsivePie
-          data={data}
-          sortByValue={true}
-          margin={{ top: 10, right: 0, bottom: 10, left: 0 }}
-          innerRadius={0.5}
-          padAngle={2}
-          cornerRadius={8}
-          activeOuterRadiusOffset={8}
-          borderWidth={1}
-          borderColor={{
-            from: "color",
-            modifiers: [["darker", 0.5]],
-          }}
-          enableArcLinkLabels={false}
-          enableArcLabels={true}
-          arcLabel={"name"}
-          colors={{ scheme: "nivo" }}
-        />
+      <div className="">
+        <ChartContainer
+          config={chartConfig}
+          className="mx-auto aspect-square max-h-[250px]"
+        >
+          <PieChart>
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel />}
+            />
+            <Pie
+              paddingAngle={1}
+              data={data}
+              dataKey="value"
+              nameKey="name"
+              cornerRadius={5}
+              innerRadius={40}
+            />
+          </PieChart>
+        </ChartContainer>
       </div>
       <div className="flex flex-col gap-4 text-sm flex-wrap">
         <ListItems items={data} />
@@ -60,8 +72,6 @@ export const LanguageChart = () => {
     </div>
   );
 };
-
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 export function ListItems(props: { items: PieChartData[] }) {
   return (
@@ -96,15 +106,23 @@ function useData() {
         languageToEdit.value += breakdown.active_users;
         return;
       }
+      console.log(breakdown.active_users);
       languages.push({
         id: language,
         name: language,
         value: breakdown.active_users,
+        fill: ``,
       });
     });
   });
+
   // sort by value
   languages.sort((a, b) => b.value - a.value);
+
+  languages.forEach((language, index) => {
+    language.fill =
+      index < 4 ? `hsl(var(--chart-${index + 1}))` : `hsl(var(--chart-${5}))`;
+  });
 
   return languages;
 }

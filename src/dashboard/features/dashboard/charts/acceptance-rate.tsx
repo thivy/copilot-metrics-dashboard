@@ -7,10 +7,16 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { ResponsiveLine, Serie } from "@nivo/line";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { formatDate } from "../api-data";
 import { useDashboardData } from "../dashboard-state";
 
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
 export const AcceptanceRate = () => {
   return (
     <Card className="col-span-4">
@@ -21,52 +27,60 @@ export const AcceptanceRate = () => {
           Copilot
         </CardDescription>
       </CardHeader>
-      <CardContent className="h-[40dvh]">
+      <CardContent className="">
         <AcceptanceRateChart></AcceptanceRateChart>
       </CardContent>
     </Card>
   );
 };
 
-export const AcceptanceRateChart = () => {
+enum keys {
+  date = "date",
+  "completion acceptance rate" = "completion acceptance rate",
+}
+
+const chartConfig = {
+  [keys.date]: {
+    label: "date",
+    color: "hsl(var(--chart-1))",
+  },
+} satisfies ChartConfig;
+
+export function AcceptanceRateChart() {
   const data = useData();
   return (
-    <ResponsiveLine
-      data={data}
-      curve="catmullRom"
-      margin={{ top: 10, right: 10, bottom: 40, left: 45 }}
-      xScale={{ type: "point" }}
-      yScale={{
-        type: "linear",
-        min: "auto",
-        max: "auto",
-        stacked: true,
-        reverse: false,
-      }}
-      enableGridX={false}
-      axisTop={null}
-      axisRight={null}
-      axisBottom={{
-        tickSize: 5,
-        tickPadding: 5,
-        tickRotation: -45,
-      }}
-      axisLeft={{
-        tickSize: 5,
-        tickPadding: 10,
-        tickRotation: 0,
-      }}
-      colors={{ scheme: "nivo" }}
-      pointSize={10}
-      pointColor={{ theme: "background" }}
-      pointBorderWidth={2}
-      pointBorderColor={{ from: "serieColor" }}
-      pointLabelYOffset={-12}
-      enableTouchCrosshair={true}
-      useMesh={true}
-    />
+    <ChartContainer config={chartConfig} className="h-80 w-full">
+      <AreaChart
+        accessibilityLayer
+        data={data}
+        margin={{
+          left: -20,
+          right: 0,
+        }}
+      >
+        <CartesianGrid vertical={false} />
+        <XAxis
+          dataKey={keys.date}
+          tickLine={false}
+          axisLine={false}
+          tickMargin={8}
+        />
+        <YAxis tickLine={false} axisLine={false} tickMargin={8} tickCount={3} />
+        <ChartTooltip
+          cursor={false}
+          content={<ChartTooltipContent indicator="line" />}
+        />
+        <Area
+          dataKey={keys["completion acceptance rate"]}
+          type="natural"
+          fill="var(--color-date)"
+          fillOpacity={0.4}
+          stroke="var(--color-date)"
+        />
+      </AreaChart>
+    </ChartContainer>
   );
-};
+}
 
 function useData() {
   const { data } = useDashboardData();
@@ -93,16 +107,10 @@ function useData() {
 
   const completion = rates.map((item) => {
     return {
-      x: item.dayAndMonth,
-      y: item.completionAcceptanceRate,
+      [keys.date]: item.dayAndMonth,
+      [keys["completion acceptance rate"]]: item.completionAcceptanceRate,
     };
   });
 
-  const series: Serie[] = [
-    {
-      id: "completion",
-      data: completion,
-    },
-  ];
-  return series;
+  return completion;
 }

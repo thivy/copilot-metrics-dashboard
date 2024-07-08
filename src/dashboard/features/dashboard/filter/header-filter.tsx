@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Eraser } from "lucide-react";
 import { useDashboardData } from "../dashboard-state";
 import { DropdownFilter } from "./dropdown-filter";
 
@@ -33,8 +34,12 @@ export function Filters() {
         onSelect={filterEditor}
         selectedItems={selectedEditors}
       />
-      <Button variant={"secondary"} onClick={() => resetAllFilters()}>
-        Reset
+      <Button
+        variant={"default"}
+        size={"icon"}
+        onClick={() => resetAllFilters()}
+      >
+        <Eraser size={18} />
       </Button>
     </div>
   );

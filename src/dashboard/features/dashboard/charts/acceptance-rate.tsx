@@ -40,14 +40,14 @@ export const AcceptanceRate = () => {
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey={config.completionAcceptanceRate}
+              dataKey={config.dayAndMonth}
               tickLine={false}
               axisLine={false}
               tickMargin={8}
               minTickGap={32}
             />
             <YAxis
-              dataKey={config.dayAndMonth}
+              dataKey={config.completionAcceptanceRate}
               tickLine={false}
               axisLine={false}
               tickMargin={8}
@@ -117,3 +117,22 @@ function useData(): Data[] {
 
   return rates;
 }
+
+export const useInlineAcceptanceAverage = () => {
+  const { data } = useDashboardData();
+  let sum = 0;
+
+  const rates = data.map((item) => {
+    const completionAcceptanceRate =
+      item.total_lines_suggested !== 0
+        ? (item.total_lines_accepted / item.total_lines_suggested) * 100
+        : 0;
+    sum += completionAcceptanceRate;
+
+    return {
+      completionAcceptanceRate,
+    };
+  });
+
+  return sum / rates.length;
+};

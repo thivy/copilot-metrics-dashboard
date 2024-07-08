@@ -1,5 +1,6 @@
 "use client";
 import { useDashboardData } from "../dashboard-state";
+import { useInlineAcceptanceAverage } from "./acceptance-rate";
 import StatsCard from "./stats-card";
 
 export const Stats = () => {
@@ -31,31 +32,6 @@ export const Stats = () => {
       ></StatsCard>
     </div>
   );
-};
-
-// inline code completion acceptance rate average
-const useInlineAcceptanceAverage = () => {
-  const { data } = useDashboardData();
-  let sum = 0;
-
-  const rates = data.map((item) => {
-    let total_lines_accepted = 0;
-    let total_lines_suggested = 0;
-
-    item.breakdown.forEach((breakdown) => {
-      total_lines_accepted += breakdown.lines_accepted;
-      total_lines_suggested += breakdown.lines_suggested;
-    });
-
-    const completionAcceptanceRate =
-      (total_lines_accepted / total_lines_suggested) * 100;
-    sum += completionAcceptanceRate;
-    return {
-      completionAcceptanceRate,
-    };
-  });
-
-  return sum / rates.length;
 };
 
 // daily average active users

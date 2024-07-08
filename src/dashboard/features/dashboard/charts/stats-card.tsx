@@ -1,10 +1,5 @@
-import {
-  Card,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { ChartHeader } from "./chart-header";
 
 interface StatsCardProps {
   title: string;
@@ -15,15 +10,10 @@ interface StatsCardProps {
 export default function StatsCard(props: StatsCardProps) {
   return (
     <Card>
-      <CardHeader className="">
-        <CardDescription className="text-xs">{props.title}</CardDescription>
+      <ChartHeader title={props.title} description={props.description} />
+      <CardContent>
         <CardTitle className="text-4xl">{props.value}</CardTitle>
-      </CardHeader>
-      <CardFooter>
-        <CardDescription className="text-xs">
-          {props.description}
-        </CardDescription>
-      </CardFooter>
+      </CardContent>
     </Card>
   );
 }

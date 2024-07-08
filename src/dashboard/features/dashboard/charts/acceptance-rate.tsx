@@ -1,11 +1,5 @@
 "use client";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { formatDate } from "../api-data";
@@ -19,6 +13,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { ChartHeader } from "./chart-header";
 
 export const AcceptanceRate = () => {
   const data = useData();
@@ -26,13 +21,12 @@ export const AcceptanceRate = () => {
 
   return (
     <Card className="col-span-4">
-      <CardHeader>
-        <CardTitle>Acceptance rate</CardTitle>
-        <CardDescription>
-          The ratio of accepted lines to the total lines suggested by GitHub
-          Copilot
-        </CardDescription>
-      </CardHeader>
+      <ChartHeader
+        title="Acceptance rate"
+        description=" The ratio of accepted lines to the total lines suggested by GitHub
+          Copilot"
+      />
+
       <CardContent>
         <ChartContainer config={config.config} className="h-80 w-full">
           <AreaChart

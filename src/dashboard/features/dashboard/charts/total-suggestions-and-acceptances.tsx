@@ -1,11 +1,5 @@
 "use client";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { formatDate } from "../api-data";
 import { useDashboardData } from "../dashboard-state";
 
@@ -19,20 +13,17 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { ChartHeader } from "./chart-header";
 
 export const TotalSuggestionsAndAcceptances = () => {
   const data = useData();
   const config = chartConfig();
   return (
     <Card className="col-span-4">
-      <CardHeader>
-        <CardTitle>Total code suggestions and acceptance</CardTitle>
-        <CardDescription>
-          The total number of Copilot code completion suggestions shown to users
-          vs the total number of Copilot code completion suggestions accepted by
-          users.
-        </CardDescription>
-      </CardHeader>
+      <ChartHeader
+        title="Total code suggestions and acceptance"
+        description="The total number of Copilot code completion suggestions shown to users vs the total number of Copilot code completion suggestions accepted by users."
+      />
       <CardContent>
         <ChartContainer config={config.config} className="w-full h-80">
           <BarChart accessibilityLayer data={data}>

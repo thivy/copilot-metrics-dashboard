@@ -1,11 +1,5 @@
 "use client";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useDashboardData } from "../dashboard-state";
@@ -17,13 +11,14 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { Pie, PieChart } from "recharts";
+import { ChartHeader } from "./chart-header";
 export const Language = () => {
   return (
     <Card className="col-span-2">
-      <CardHeader>
-        <CardTitle>Language</CardTitle>
-        <CardDescription>Number of active users per language</CardDescription>
-      </CardHeader>
+      <ChartHeader
+        title="Language"
+        description="Number of active users per language"
+      />
       <CardContent>
         <LanguageChart />
       </CardContent>

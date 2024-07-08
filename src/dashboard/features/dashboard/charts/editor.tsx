@@ -1,11 +1,5 @@
 "use client";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 import { useDashboardData } from "../dashboard-state";
 import { ListItems, PieChartData } from "./language";
@@ -18,15 +12,14 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { ChartHeader } from "./chart-header";
 export const Editor = () => {
   return (
     <Card className="col-span-2">
-      <CardHeader>
-        <CardTitle>Editor</CardTitle>
-        <CardDescription>
-          Number of active users per code editor
-        </CardDescription>
-      </CardHeader>
+      <ChartHeader
+        title="Editor"
+        description="Number of active users per code editor"
+      />
       <CardContent>
         <EditorChart />
       </CardContent>
@@ -38,7 +31,7 @@ export const EditorChart = () => {
   const data = useData();
   return (
     <div className="w-full h-full flex flex-col gap-4 ">
-      <div className="">
+      <div>
         <ChartContainer
           config={chartConfig}
           className="mx-auto aspect-square max-h-[250px]"

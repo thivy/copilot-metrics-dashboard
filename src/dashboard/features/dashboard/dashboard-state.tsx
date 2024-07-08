@@ -7,10 +7,10 @@ import {
   useEffect,
   useState,
 } from "react";
-import { APIResponse } from "./api-data";
+import { CopilotUsage } from "./copilot-metrics-service";
 
 interface State {
-  data: APIResponse[];
+  data: CopilotUsage[];
   allLanguages: DropdownItem[];
   allEditors: DropdownItem[];
   selectedLanguages: DropdownItem[];
@@ -23,7 +23,7 @@ interface State {
 }
 
 interface IProps extends PropsWithChildren {
-  apiData: APIResponse[];
+  apiData: CopilotUsage[];
 }
 
 export interface DropdownItem {
@@ -33,7 +33,7 @@ export interface DropdownItem {
 
 const DashboardContext = createContext<State | undefined>(undefined);
 
-const uniqueLanguages = (response: APIResponse[]) => {
+const uniqueLanguages = (response: CopilotUsage[]) => {
   const languages: DropdownItem[] = [];
   response.forEach((item) => {
     item.breakdown.forEach((breakdown) => {
@@ -52,7 +52,7 @@ const uniqueLanguages = (response: APIResponse[]) => {
   return languages;
 };
 
-const uniqueEditors = (response: APIResponse[]) => {
+const uniqueEditors = (response: CopilotUsage[]) => {
   const editors: DropdownItem[] = [];
   response.forEach((item) => {
     item.breakdown.forEach((breakdown) => {
@@ -72,8 +72,8 @@ const uniqueEditors = (response: APIResponse[]) => {
 };
 
 const DashboardProvider: React.FC<IProps> = ({ children, apiData }: IProps) => {
-  const [response, setResponse] = useState<APIResponse[]>(apiData);
-  const [data, setData] = useState<APIResponse[]>(apiData);
+  const [response, setResponse] = useState<CopilotUsage[]>(apiData);
+  const [data, setData] = useState<CopilotUsage[]>(apiData);
   const [selectedLanguages, setSelectedLanguages] = useState<DropdownItem[]>(
     []
   );
@@ -119,7 +119,7 @@ const DashboardProvider: React.FC<IProps> = ({ children, apiData }: IProps) => {
   useEffect(() => {
     const applyFilters = () => {
       // deep clone response including the breakdowns
-      const items = JSON.parse(JSON.stringify(response)) as Array<APIResponse>;
+      const items = JSON.parse(JSON.stringify(response)) as Array<CopilotUsage>;
 
       if (selectedLanguages.length !== 0) {
         items.forEach((item) => {

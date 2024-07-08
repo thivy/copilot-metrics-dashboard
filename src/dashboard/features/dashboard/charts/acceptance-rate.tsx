@@ -2,7 +2,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import { formatDate } from "../api-data";
+import { formatDate } from "../copilot-metrics-service";
 import { useDashboardData } from "../dashboard-state";
 
 import {

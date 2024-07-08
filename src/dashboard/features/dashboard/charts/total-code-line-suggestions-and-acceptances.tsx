@@ -1,6 +1,6 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
-import { formatDate } from "../api-data";
+import { formatDate } from "../copilot-metrics-service";
 import { useDashboardData } from "../dashboard-state";
 
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";

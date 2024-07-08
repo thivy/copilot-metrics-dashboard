@@ -1,6 +1,4 @@
-import { cache } from "react";
-
-export interface APIResponse {
+export interface CopilotUsage {
   total_suggestions_count: number;
   total_acceptances_count: number;
   total_lines_suggested: number;
@@ -23,15 +21,15 @@ export interface Breakdown {
   active_users: number;
 }
 
-export const getData = cache(async (): Promise<APIResponse[]> => {
-  const promise = new Promise<APIResponse[]>((resolve) => {
+export const getCopilotMetrics = (): Promise<CopilotUsage[]> => {
+  const promise = new Promise<CopilotUsage[]>((resolve) => {
     setTimeout(() => {
       resolve(data);
     }, 1000);
   });
 
   return promise;
-});
+};
 
 export const formatDate = (date: string) => {
   return new Date(date).toLocaleDateString("en-AU", {

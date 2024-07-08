@@ -2,7 +2,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import { formatDate } from "../copilot-metrics-service";
+import { formatDate, Trend } from "../copilot-metrics-service";
 import { useDashboardData } from "../dashboard-state";
 
 import {
@@ -118,21 +118,27 @@ function useData(): Data[] {
   return rates;
 }
 
-export const useInlineAcceptanceAverage = () => {
+export const useCompletionAverage = () => {
   const { data } = useDashboardData();
   let sum = 0;
+  let trend: Trend = "up";
+  let lastValue = 0;
 
   const rates = data.map((item) => {
     const completionAcceptanceRate =
       item.total_lines_suggested !== 0
         ? (item.total_lines_accepted / item.total_lines_suggested) * 100
         : 0;
+
+    trend = completionAcceptanceRate < lastValue ? "down" : "up";
+
     sum += completionAcceptanceRate;
 
+    lastValue = completionAcceptanceRate;
     return {
       completionAcceptanceRate,
     };
   });
 
-  return sum / rates.length;
+  return { average: sum / rates.length, trend };
 };

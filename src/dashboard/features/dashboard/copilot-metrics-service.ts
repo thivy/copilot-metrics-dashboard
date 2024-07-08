@@ -1,3 +1,5 @@
+export type Trend = "up" | "down";
+
 export interface CopilotUsage {
   total_suggestions_count: number;
   total_acceptances_count: number;

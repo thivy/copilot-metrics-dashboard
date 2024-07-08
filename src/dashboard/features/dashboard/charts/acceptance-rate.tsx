@@ -54,10 +54,7 @@ export const AcceptanceRate = () => {
               allowDataOverflow
               domain={[0, 100]}
             />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent indicator="line" />}
-            />
+            <ChartTooltip cursor={true} content={<ChartTooltipContent />} />
             <Area
               dataKey={config.completionAcceptanceRate}
               type="natural"

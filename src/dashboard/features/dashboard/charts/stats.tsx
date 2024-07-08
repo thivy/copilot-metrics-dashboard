@@ -7,7 +7,7 @@ export const Stats = () => {
   const { total_active_users, total_active_chat_users } =
     useDailyAverageUsers();
   return (
-    <div className="grid grid-cols-3 gap-4 col-span-4">
+    <div className="grid grid-cols-4 gap-4 col-span-4">
       <StatsCard
         title="Completion Average"
         description="Inline code acceptance average"
@@ -18,6 +18,11 @@ export const Stats = () => {
         title="Active users"
         description="Daily average active users"
         value={total_active_users.toFixed(0) + ""}
+      ></StatsCard>
+      <StatsCard
+        title="Active chat users"
+        description="Daily average active chat users"
+        value={total_active_chat_users.toFixed(0) + ""}
       ></StatsCard>
       <StatsCard
         title="Active chat users"

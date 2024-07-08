@@ -50,10 +50,7 @@ export const TotalCodeLineSuggestionsAndAcceptances = () => {
               tickMargin={8}
               minTickGap={32}
             />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent indicator="dashed" />}
-            />
+            <ChartTooltip cursor={true} content={<ChartTooltipContent />} />
             <Bar
               dataKey={config.totalLinesSuggested}
               fill="hsl(var(--chart-2))"

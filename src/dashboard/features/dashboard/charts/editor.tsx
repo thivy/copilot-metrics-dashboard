@@ -37,10 +37,7 @@ export const EditorChart = () => {
           className="mx-auto aspect-square max-h-[250px]"
         >
           <PieChart>
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
+            <ChartTooltip content={<ChartTooltipContent hideLabel />} />
             <Pie
               paddingAngle={1}
               data={data}

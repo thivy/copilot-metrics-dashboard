@@ -42,8 +42,8 @@ export const TotalSuggestionsAndAcceptances = () => {
               minTickGap={32}
             />
             <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent indicator="dashed" />}
+              cursor={true}
+              content={<ChartTooltipContent  />}
             />
             <Bar
               dataKey={config.totalSuggestionsCount}

@@ -50,10 +50,7 @@ export const ActiveUsers = () => {
               tickMargin={8}
               minTickGap={32}
             />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent indicator="dashed" />}
-            />
+            <ChartTooltip cursor={true} content={<ChartTooltipContent />} />
             <Bar
               dataKey={config.totalUsers}
               fill="hsl(var(--chart-2))"

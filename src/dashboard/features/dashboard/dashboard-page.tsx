@@ -1,5 +1,6 @@
 import { getData } from "./api-data";
 import { AcceptanceRate } from "./charts/acceptance-rate";
+import { ActiveUsers } from "./charts/active-users";
 import { Editor } from "./charts/editor";
 import { Language } from "./charts/language";
 import { Stats } from "./charts/stats";
@@ -21,7 +22,9 @@ export default async function Dashboard() {
             <AcceptanceRate />
             <TotalCodeLineSuggestionsAndAcceptances />
             <TotalSuggestionsAndAcceptances />
-            <Language /> <Editor />
+            <Language />
+            <Editor />
+            <ActiveUsers />
           </div>
         </div>
       </main>

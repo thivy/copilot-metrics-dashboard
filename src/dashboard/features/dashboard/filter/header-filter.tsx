@@ -35,7 +35,7 @@ export function Filters() {
         selectedItems={selectedEditors}
       />
       <Button
-        variant={"default"}
+        variant={"secondary"}
         size={"icon"}
         onClick={() => resetAllFilters()}
       >

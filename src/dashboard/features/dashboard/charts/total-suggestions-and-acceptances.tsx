@@ -1,6 +1,5 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
-import { formatDate } from "../copilot-metrics-service";
 import { useDashboardData } from "../dashboard-state";
 
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
@@ -35,7 +34,7 @@ export const TotalSuggestionsAndAcceptances = () => {
               allowDataOverflow
             />
             <XAxis
-              dataKey={config.dayAndMonth}
+              dataKey={config.timeFrameDisplay}
               tickLine={false}
               axisLine={false}
               tickMargin={8}
@@ -63,7 +62,7 @@ export const TotalSuggestionsAndAcceptances = () => {
 const chartConfig = () => {
   const totalAcceptancesCount: DataKey = "totalAcceptancesCount";
   const totalSuggestionsCount: DataKey = "totalSuggestionsCount";
-  const dayAndMonth: DataKey = "dayAndMonth";
+  const timeFrameDisplay: DataKey = "timeFrameDisplay";
 
   const config = {
     [totalAcceptancesCount]: {
@@ -76,7 +75,7 @@ const chartConfig = () => {
 
   return {
     config,
-    dayAndMonth,
+    timeFrameDisplay,
     totalAcceptancesCount,
     totalSuggestionsCount,
   };
@@ -85,8 +84,7 @@ const chartConfig = () => {
 interface Data {
   totalAcceptancesCount: number;
   totalSuggestionsCount: number;
-  day: string;
-  dayAndMonth: string;
+  timeFrameDisplay: string;
 }
 
 type DataKey = keyof Data;
@@ -94,8 +92,6 @@ type DataKey = keyof Data;
 export function useData(): Data[] {
   const { data } = useDashboardData();
   const rates = data.map((item) => {
-    const { day } = item;
-
     let totalAcceptancesCount = 0;
     let totalSuggestionsCount = 0;
 
@@ -107,8 +103,7 @@ export function useData(): Data[] {
     return {
       totalAcceptancesCount,
       totalSuggestionsCount,
-      day,
-      dayAndMonth: formatDate(day),
+      timeFrameDisplay: item.time_frame_display,
     };
   });
 

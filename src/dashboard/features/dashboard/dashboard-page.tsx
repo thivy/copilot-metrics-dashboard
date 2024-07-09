@@ -7,27 +7,30 @@ import { TotalCodeLineSuggestionsAndAcceptances } from "./charts/total-code-line
 import { TotalSuggestionsAndAcceptances } from "./charts/total-suggestions-and-acceptances";
 import { getCopilotMetrics } from "./copilot-metrics-service";
 import { DashboardProvider } from "./dashboard-state";
+import { TimeFrameProvider } from "./filter/TimeFrameToggle";
 import { Header } from "./header";
 
 export default async function Dashboard() {
   const allData = await getCopilotMetrics();
   return (
-    <DashboardProvider apiData={allData}>
-      <main className="flex flex-1 flex-col gap-4 md:gap-8 pb-8">
-        <Header />
+    <TimeFrameProvider>
+      <DashboardProvider apiData={allData}>
+        <main className="flex flex-1 flex-col gap-4 md:gap-8 pb-8">
+          <Header />
 
-        <div className="mx-auto w-full max-w-6xl container">
-          <div className="grid grid-cols-4 gap-6">
-            <Stats />
-            <AcceptanceRate />
-            <Language />
-            <Editor />
-            <ActiveUsers />
-            <TotalCodeLineSuggestionsAndAcceptances />
-            <TotalSuggestionsAndAcceptances />
+          <div className="mx-auto w-full max-w-6xl container">
+            <div className="grid grid-cols-4 gap-6">
+              <Stats />
+              <AcceptanceRate />
+              <Language />
+              <Editor />
+              <ActiveUsers />
+              <TotalCodeLineSuggestionsAndAcceptances />
+              <TotalSuggestionsAndAcceptances />
+            </div>
           </div>
-        </div>
-      </main>
-    </DashboardProvider>
+        </main>
+      </DashboardProvider>
+    </TimeFrameProvider>
   );
 }

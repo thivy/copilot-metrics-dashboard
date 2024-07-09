@@ -18,7 +18,7 @@ export const Editor = () => {
     <Card className="col-span-2">
       <ChartHeader
         title="Editor"
-        description="Number of active users per code editor"
+        description="Percentage of active users per editor"
       />
       <CardContent>
         <EditorChart />

@@ -1,6 +1,5 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
-import { formatDate } from "../copilot-metrics-service";
 import { useDashboardData } from "../dashboard-state";
 
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
@@ -44,7 +43,7 @@ export const ActiveUsers = () => {
               allowDataOverflow
             />
             <XAxis
-              dataKey={config.dayAndMonth}
+              dataKey={config.timeFrameDisplay}
               tickLine={false}
               axisLine={false}
               tickMargin={8}
@@ -72,7 +71,7 @@ export const ActiveUsers = () => {
 const chartConfig = () => {
   const totalUsers: DataKey = "totalUsers";
   const totalChatUsers: DataKey = "totalChatUsers";
-  const dayAndMonth: DataKey = "dayAndMonth";
+  const timeFrameDisplay: DataKey = "timeFrameDisplay";
 
   const config = {
     [totalUsers]: {
@@ -85,7 +84,7 @@ const chartConfig = () => {
 
   return {
     config,
-    dayAndMonth,
+    timeFrameDisplay,
     totalUsers,
     totalChatUsers,
   };
@@ -94,8 +93,7 @@ const chartConfig = () => {
 interface Data {
   totalUsers: number;
   totalChatUsers: number;
-  day: string;
-  dayAndMonth: string;
+  timeFrameDisplay: string;
 }
 
 type DataKey = keyof Data;
@@ -104,16 +102,13 @@ export function useData(): Data[] {
   const { data } = useDashboardData();
 
   const rates = data.map((item) => {
-    const { day } = item;
-
     let totalUsers = item.total_active_users;
     let totalChatUsers = item.total_active_chat_users;
 
     return {
       totalUsers,
       totalChatUsers,
-      day,
-      dayAndMonth: formatDate(day),
+      timeFrameDisplay: item.time_frame_display,
     };
   });
 

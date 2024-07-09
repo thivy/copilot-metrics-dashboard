@@ -1,3 +1,5 @@
+import { format, startOfWeek } from "date-fns";
+
 export type Trend = "up" | "down";
 
 export interface CopilotUsage {
@@ -13,6 +15,12 @@ export interface CopilotUsage {
   breakdown: Breakdown[];
 }
 
+export interface CopilotUsageOutput extends CopilotUsage {
+  time_frame_week: string;
+  time_frame_month: string;
+  time_frame_display: string;
+}
+
 export interface Breakdown {
   language: string;
   editor: string;
@@ -23,10 +31,11 @@ export interface Breakdown {
   active_users: number;
 }
 
-export const getCopilotMetrics = (): Promise<CopilotUsage[]> => {
-  const promise = new Promise<CopilotUsage[]>((resolve) => {
+export const getCopilotMetrics = (): Promise<CopilotUsageOutput[]> => {
+  const promise = new Promise<CopilotUsageOutput[]>((resolve) => {
     setTimeout(() => {
-      resolve(data);
+      const weekly = groupDataByTimeFrame(data);
+      resolve(weekly);
     }, 1000);
   });
 
@@ -39,6 +48,102 @@ export const formatDate = (date: string) => {
     day: "numeric",
   });
 };
+
+export const groupDataByTimeFrame = (
+  data: CopilotUsage[]
+): CopilotUsageOutput[] => {
+  // Sort data by 'day'
+  const sortedData = data.sort(
+    (a, b) => new Date(a.day).getTime() - new Date(b.day).getTime()
+  );
+
+  const weekGroups: CopilotUsageOutput[] = [];
+
+  sortedData.forEach((item) => {
+    // Convert 'day' to a Date object and find the start of its week
+    const date = new Date(item.day);
+    const weekStart = startOfWeek(date, { weekStartsOn: 1 });
+
+    // Create a unique week identifier
+    const weekIdentifier = format(weekStart, "MMM yy 'W'I");
+    const monthIdentifier = format(date, "MMM yy");
+
+    const output: CopilotUsageOutput = {
+      ...item,
+      time_frame_week: weekIdentifier,
+      time_frame_month: monthIdentifier,
+      time_frame_display: "",
+    };
+    weekGroups.push(output);
+  });
+
+  return weekGroups;
+};
+
+export const sampleData = [
+  {
+    total_suggestions_count: 55,
+    total_acceptances_count: 55,
+    total_lines_suggested: 55,
+    total_lines_accepted: 55,
+    total_active_users: 97,
+    total_chat_acceptances: 157,
+    total_chat_turns: 190,
+    total_active_chat_users: 38,
+    day: "2024-03-18",
+    breakdown: [
+      {
+        language: "javascript",
+        editor: "vs",
+        suggestions_count: 25,
+        acceptances_count: 25,
+        lines_suggested: 133,
+        lines_accepted: 133,
+        active_users: 2,
+      },
+      {
+        language: "typescript",
+        editor: "vscode",
+        suggestions_count: 25,
+        acceptances_count: 20,
+        lines_suggested: 133,
+        lines_accepted: 133,
+        active_users: 2,
+      },
+    ],
+  },
+  {
+    total_suggestions_count: 55,
+    total_acceptances_count: 55,
+    total_lines_suggested: 55,
+    total_lines_accepted: 55,
+    total_active_users: 97,
+    total_chat_acceptances: 157,
+    total_chat_turns: 190,
+    total_active_chat_users: 38,
+    day: "2024-04-19",
+    breakdown: [
+      {
+        language: "javascript",
+        editor: "vscode",
+        suggestions_count: 25,
+        acceptances_count: 25,
+        lines_suggested: 133,
+        lines_accepted: 133,
+        active_users: 2,
+      },
+      {
+        language: "typescript",
+        editor: "vscode",
+        suggestions_count: 25,
+        acceptances_count: 20,
+        lines_suggested: 133,
+        lines_accepted: 133,
+        active_users: 2,
+      },
+    ],
+  },
+];
 
 export const data = [
   {

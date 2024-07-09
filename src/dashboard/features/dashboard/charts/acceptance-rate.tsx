@@ -2,7 +2,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import { formatDate, Trend } from "../copilot-metrics-service";
+import { Trend } from "../copilot-metrics-service";
 import { useDashboardData } from "../dashboard-state";
 
 import {
@@ -40,7 +40,7 @@ export const AcceptanceRate = () => {
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey={config.dayAndMonth}
+              dataKey={config.timeFrameDisplay}
               tickLine={false}
               axisLine={false}
               tickMargin={8}
@@ -72,8 +72,7 @@ export const AcceptanceRate = () => {
 
 const chartConfig = () => {
   const completionAcceptanceRate: DataKey = "completionAcceptanceRate";
-  const day: DataKey = "day";
-  const dayAndMonth: DataKey = "dayAndMonth";
+  const timeFrameDisplay: DataKey = "timeFrameDisplay";
 
   const config = {
     completionAcceptanceRate: {
@@ -83,16 +82,15 @@ const chartConfig = () => {
 
   return {
     config,
-    dayAndMonth,
+    timeFrameDisplay,
     completionAcceptanceRate,
-    day,
   };
 };
 
 interface Data {
-  day: string;
+  // day: string;
   completionAcceptanceRate: number;
-  dayAndMonth: string;
+  timeFrameDisplay: string;
 }
 
 type DataKey = keyof Data;
@@ -101,8 +99,6 @@ function useData(): Data[] {
   const { data } = useDashboardData();
 
   const rates = data.map((item) => {
-    const { day } = item;
-
     const rate =
       item.total_lines_suggested !== 0
         ? (item.total_lines_accepted / item.total_lines_suggested) * 100
@@ -110,8 +106,7 @@ function useData(): Data[] {
 
     return {
       completionAcceptanceRate: parseFloat(rate.toFixed(2)),
-      day,
-      dayAndMonth: formatDate(day),
+      timeFrameDisplay: item.time_frame_display,
     };
   });
 

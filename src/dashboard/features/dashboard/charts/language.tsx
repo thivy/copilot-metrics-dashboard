@@ -17,7 +17,7 @@ export const Language = () => {
     <Card className="col-span-2">
       <ChartHeader
         title="Language"
-        description="Number of active users per language"
+        description="Percentage of active users per language"
       />
       <CardContent>
         <LanguageChart />
@@ -69,17 +69,20 @@ export const LanguageChart = () => {
 };
 
 export function ListItems(props: { items: PieChartData[] }) {
+  const { items } = props;
+  const totalSum = items.reduce((acc, item) => acc + item.value, 0);
+
   return (
     <ScrollArea className="h-72 rounded-md">
       <div className="gap-1 flex flex-col">
-        {props.items.map((item) => (
+        {items.map((item) => (
           <div
             className="px-4 py-2 text-sm flex items-center border-b border-muted"
             key={item.name}
           >
             <span className="flex-1">{item.name}</span>
             <span className="p-1 px-2 border bg-primary-foreground rounded-full text-xs">
-              {item.value}
+              {((item.value / totalSum) * 100).toFixed(2)} %{" "}
             </span>
           </div>
         ))}

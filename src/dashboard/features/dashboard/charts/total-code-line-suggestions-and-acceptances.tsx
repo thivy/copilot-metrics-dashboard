@@ -1,6 +1,5 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
-import { formatDate } from "../copilot-metrics-service";
 import { useDashboardData } from "../dashboard-state";
 
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
@@ -44,7 +43,7 @@ export const TotalCodeLineSuggestionsAndAcceptances = () => {
               allowDataOverflow
             />
             <XAxis
-              dataKey={config.dayAndMonth}
+              dataKey={config.timeFrameDisplay}
               tickLine={false}
               axisLine={false}
               tickMargin={8}
@@ -72,7 +71,7 @@ export const TotalCodeLineSuggestionsAndAcceptances = () => {
 const chartConfig = () => {
   const totalLinesAccepted: DataKey = "totalLinesAccepted";
   const totalLinesSuggested: DataKey = "totalLinesSuggested";
-  const dayAndMonth: DataKey = "dayAndMonth";
+  const timeFrameDisplay: DataKey = "timeFrameDisplay";
 
   const config = {
     [totalLinesAccepted]: {
@@ -85,7 +84,7 @@ const chartConfig = () => {
 
   return {
     config,
-    dayAndMonth,
+    timeFrameDisplay,
     totalLinesAccepted,
     totalLinesSuggested,
   };
@@ -94,8 +93,7 @@ const chartConfig = () => {
 interface Data {
   totalLinesAccepted: number;
   totalLinesSuggested: number;
-  day: string;
-  dayAndMonth: string;
+  timeFrameDisplay: string;
 }
 
 type DataKey = keyof Data;
@@ -103,8 +101,6 @@ type DataKey = keyof Data;
 export function useData(): Data[] {
   const { data } = useDashboardData();
   const rates = data.map((item) => {
-    const { day } = item;
-
     let total_lines_accepted = 0;
     let total_lines_suggested = 0;
 
@@ -116,8 +112,7 @@ export function useData(): Data[] {
     return {
       totalLinesAccepted: total_lines_accepted,
       totalLinesSuggested: total_lines_suggested,
-      day,
-      dayAndMonth: formatDate(day),
+      timeFrameDisplay: item.time_frame_display,
     };
   });
 

@@ -28,13 +28,13 @@ export const Stats = () => {
       ></StatsCard>
       <StatsCard
         title="Active users"
-        description="Daily average active users"
+        description="Average active users"
         value={total_active_users.toFixed(0) + ""}
         trend={activeUsersTrend}
       ></StatsCard>
       <StatsCard
         title="Active chat users"
-        description="Daily average active chat users"
+        description="Average active chat users"
         value={total_active_chat_users.toFixed(0) + ""}
         trend={activeChatUsersTrend}
       ></StatsCard>

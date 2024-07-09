@@ -7,8 +7,8 @@ import {
   useEffect,
   useState,
 } from "react";
-import { CopilotUsageOutput } from "./copilot-metrics-service";
-import { useTimeFrame } from "./filter/TimeFrameToggle";
+import { CopilotUsageOutput, formatDate } from "./copilot-metrics-service";
+import { useTimeFrame } from "./filter/time-frame-toggle";
 
 interface State {
   data: CopilotUsageOutput[];
@@ -31,7 +31,7 @@ export interface DropdownItem {
   name: string;
 }
 
-export type TimeFrame = "weekly" | "monthly";
+export type TimeFrame = "daily" | "weekly" | "monthly";
 
 const DashboardContext = createContext<State | undefined>(undefined);
 
@@ -71,48 +71,40 @@ const uniqueEditors = (response: CopilotUsageOutput[]) => {
 
 const DashboardProvider: React.FC<IProps> = ({ children, apiData }: IProps) => {
   const [response, setResponse] = useState<CopilotUsageOutput[]>(apiData);
-  const [data, setData] = useState<CopilotUsageOutput[]>(apiData);
-  const [selectedLanguages, setSelectedLanguages] = useState<DropdownItem[]>(
-    []
-  );
-  const [selectedEditors, setSelectedEditors] = useState<DropdownItem[]>([]);
-  const [allLanguages, _setLanguages] = useState<DropdownItem[]>(
-    uniqueLanguages(response)
-  );
+  const [data, setData] = useState<CopilotUsageOutput[]>([]);
 
-  const [allEditors, _setAllEditors] = useState<DropdownItem[]>(
-    uniqueEditors(response)
-  );
+  const [languages, setLanguages] = useState<DropdownItem[]>([]);
+  const [editors, setEditors] = useState<DropdownItem[]>([]);
+
+  const [allLanguages] = useState<DropdownItem[]>(uniqueLanguages(response));
+  const [allEditors] = useState<DropdownItem[]>(uniqueEditors(response));
 
   const { selectedTimeFrame } = useTimeFrame();
+  const filteredData = useFilteredData(languages, editors, response);
 
   const filterEditor = (editor: string) => {
-    const index = selectedEditors.findIndex((l) => l.name === editor);
+    const index = editors.findIndex((l) => l.name === editor);
 
     if (index === -1) {
       const item = allEditors.find((l) => l.name === editor);
       if (item) {
-        setSelectedEditors([...selectedEditors, item]);
+        setEditors([...editors, item]);
       }
     } else {
-      setSelectedEditors(
-        selectedEditors.filter((item) => item.name !== editor)
-      );
+      setEditors(editors.filter((item) => item.name !== editor));
     }
   };
 
   const filterLanguage = (language: string) => {
-    const index = selectedLanguages.findIndex((l) => l.name === language);
+    const index = languages.findIndex((l) => l.name === language);
 
     if (index === -1) {
       const item = allLanguages.find((l) => l.name === language);
       if (item) {
-        setSelectedLanguages([...selectedLanguages, item]);
+        setLanguages([...languages, item]);
       }
     } else {
-      setSelectedLanguages(
-        selectedLanguages.filter((item) => item.name !== language)
-      );
+      setLanguages(languages.filter((item) => item.name !== language));
     }
   };
 
@@ -122,8 +114,59 @@ const DashboardProvider: React.FC<IProps> = ({ children, apiData }: IProps) => {
   }, [apiData, selectedTimeFrame]);
 
   useEffect(() => {
+    setData(filteredData);
+  }, [filteredData]);
+
+  const resetAllFilters = () => {
+    setLanguages([]);
+    setEditors([]);
+  };
+
+  const editorIsSelected = (editor: string) => {
+    return editors.some((item) => item.name === editor);
+  };
+
+  const languageIsSelected = (language: string) => {
+    return languages.some((item) => item.name === language);
+  };
+
+  return (
+    <DashboardContext.Provider
+      value={{
+        data,
+        allLanguages,
+        allEditors,
+        selectedLanguages: languages,
+        selectedEditors: editors,
+        filterLanguage,
+        filterEditor,
+        resetAllFilters,
+        editorIsSelected,
+        languageIsSelected,
+      }}
+    >
+      {children}
+    </DashboardContext.Provider>
+  );
+};
+
+function useDashboardData() {
+  const context = useContext(DashboardContext);
+  if (context === undefined) {
+    throw new Error("useDashboardData must be used within a CountProvider");
+  }
+  return context;
+}
+
+function useFilteredData(
+  selectedLanguages: DropdownItem[],
+  selectedEditors: DropdownItem[],
+  response: CopilotUsageOutput[]
+) {
+  const [data, setData] = useState<CopilotUsageOutput[]>([]);
+
+  useEffect(() => {
     const applyFilters = () => {
-      // deep clone response including the breakdowns
       const items = JSON.parse(
         JSON.stringify(response)
       ) as Array<CopilotUsageOutput>;
@@ -148,54 +191,14 @@ const DashboardProvider: React.FC<IProps> = ({ children, apiData }: IProps) => {
         });
       }
 
-      // items with more than 0 breakdowns
       const filtered = items.filter((item) => item.breakdown.length > 0);
-
       setData(filtered);
     };
 
     applyFilters();
   }, [selectedLanguages, selectedEditors, response]);
 
-  const resetAllFilters = () => {
-    setSelectedLanguages([]);
-    setSelectedEditors([]);
-  };
-
-  const editorIsSelected = (editor: string) => {
-    return selectedEditors.some((item) => item.name === editor);
-  };
-
-  const languageIsSelected = (language: string) => {
-    return selectedLanguages.some((item) => item.name === language);
-  };
-
-  return (
-    <DashboardContext.Provider
-      value={{
-        data,
-        allLanguages,
-        allEditors,
-        selectedLanguages,
-        selectedEditors,
-        filterLanguage,
-        filterEditor,
-        resetAllFilters,
-        editorIsSelected,
-        languageIsSelected,
-      }}
-    >
-      {children}
-    </DashboardContext.Provider>
-  );
-};
-
-function useDashboardData() {
-  const context = useContext(DashboardContext);
-  if (context === undefined) {
-    throw new Error("useDashboardData must be used within a CountProvider");
-  }
-  return context;
+  return data;
 }
 
 const aggregatedDataByTimeFrame = (
@@ -206,15 +209,22 @@ const aggregatedDataByTimeFrame = (
     JSON.stringify(apiData)
   ) as Array<CopilotUsageOutput>;
 
+  if (timeFrame === "daily") {
+    items.forEach((item) => {
+      item.time_frame_display = formatDate(item.day);
+    });
+    return items;
+  }
+
   const updatedResponse: CopilotUsageOutput[] = [];
 
   const groupedByTimeFrame = items.reduce((acc, item) => {
-    const week =
+    const timeFrameLabel =
       timeFrame === "weekly" ? item.time_frame_week : item.time_frame_month;
-    if (!acc[week]) {
-      acc[week] = [];
+    if (!acc[timeFrameLabel]) {
+      acc[timeFrameLabel] = [];
     }
-    acc[week].push(item);
+    acc[timeFrameLabel].push(item);
     return acc;
   }, {} as Record<string, CopilotUsageOutput[]>);
 

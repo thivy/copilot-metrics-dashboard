@@ -7,7 +7,7 @@ import { TotalCodeLineSuggestionsAndAcceptances } from "./charts/total-code-line
 import { TotalSuggestionsAndAcceptances } from "./charts/total-suggestions-and-acceptances";
 import { getCopilotMetrics } from "./copilot-metrics-service";
 import { DashboardProvider } from "./dashboard-state";
-import { TimeFrameProvider } from "./filter/TimeFrameToggle";
+import { TimeFrameProvider } from "./filter/time-frame-toggle";
 import { Header } from "./header";
 
 export default async function Dashboard() {

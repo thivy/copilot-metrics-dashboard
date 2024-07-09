@@ -1,6 +1,5 @@
 "use client";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, CalendarDays } from "lucide-react";
 import { createContext, PropsWithChildren, useContext, useState } from "react";
 import { TimeFrame } from "../dashboard-state";
 
@@ -8,7 +7,16 @@ export const TimeFrameToggle = () => {
   const { selectedTimeFrame, setSelectedTimeFrame } = useTimeFrame();
   return (
     <Tabs defaultValue={selectedTimeFrame} className="">
-      <TabsList className="grid w-full grid-cols-2">
+      <TabsList className="grid w-full grid-cols-3">
+        <TabsTrigger
+          value="daily"
+          className="gap-2 font-normal"
+          onClick={() => {
+            setSelectedTimeFrame("daily");
+          }}
+        >
+          Daily
+        </TabsTrigger>
         <TabsTrigger
           value="weekly"
           className="gap-2 font-normal"
@@ -16,7 +24,7 @@ export const TimeFrameToggle = () => {
             setSelectedTimeFrame("weekly");
           }}
         >
-          <Calendar size={16} /> Weekly
+          Weekly
         </TabsTrigger>
         <TabsTrigger
           value="monthly"
@@ -25,7 +33,7 @@ export const TimeFrameToggle = () => {
             setSelectedTimeFrame("monthly");
           }}
         >
-          <CalendarDays size={16} /> Monthly
+          Monthly
         </TabsTrigger>
       </TabsList>
     </Tabs>

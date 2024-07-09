@@ -2,7 +2,7 @@ import { DatePickerWithRange } from "@/components/ui/data-picker";
 
 import { PageHeader, PageTitle } from "../page-header/page-header";
 import { Filters } from "./filter/header-filter";
-import { TimeFrameToggle } from "./filter/TimeFrameToggle";
+import { TimeFrameToggle } from "./filter/time-frame-toggle";
 
 export const Header = () => {
   return (

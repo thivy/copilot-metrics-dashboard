@@ -1,12 +1,4 @@
-const azureEnvVars = [
-  "NEXTAUTH_SECRET",
-  "NEXTAUTH_URL",
-  "AUTH_GITHUB_ID",
-  "AUTH_GITHUB_SECRET",
-  "AZURE_AD_CLIENT_ID",
-  "AZURE_AD_CLIENT_SECRET",
-  "AZURE_AD_TENANT_ID",
-] as const;
+const azureEnvVars = ["GITHUB_ENTERPRISE", "GITHUB_TOKEN"] as const;
 
 type RequiredServerEnvKeys = (typeof azureEnvVars)[number];
 

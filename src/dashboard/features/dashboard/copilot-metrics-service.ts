@@ -31,6 +31,28 @@ export interface Breakdown {
   active_users: number;
 }
 
+const fetchData = async () => {
+  const response = await fetch(
+    `https://api.github.com/enterprises/${process.env.GITHUB_ENTERPRISE}/copilot/usage`,
+    {
+      headers: {
+        Accept: `application/vnd.github+json`,
+        Authorization: `Bearer  ${process.env.GITHUB_TOKEN}`,
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    // TODO: Handle error
+    throw new Error("Failed to fetch data");
+  }
+
+  const data = await response.json();
+
+  return data as CopilotUsage[];
+};
+
 export const getCopilotMetrics = (): Promise<CopilotUsageOutput[]> => {
   const promise = new Promise<CopilotUsageOutput[]>((resolve) => {
     setTimeout(() => {

@@ -2,7 +2,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { useDashboardData } from "../dashboard-state";
 
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import {
   ChartConfig,
@@ -25,7 +25,7 @@ export const TotalSuggestionsAndAcceptances = () => {
       />
       <CardContent>
         <ChartContainer config={config.config} className="w-full h-80">
-          <BarChart accessibilityLayer data={data}>
+          <AreaChart accessibilityLayer data={data}>
             <CartesianGrid vertical={false} />
             <YAxis
               tickLine={false}
@@ -41,18 +41,21 @@ export const TotalSuggestionsAndAcceptances = () => {
               minTickGap={32}
             />
             <ChartTooltip cursor={true} content={<ChartTooltipContent />} />
-            <Bar
+            <Area
               dataKey={config.totalSuggestionsCount}
+              type="natural"
               fill="hsl(var(--chart-2))"
-              radius={4}
+              stroke="hsl(var(--chart-2))"
             />
-            <Bar
+            <Area
               dataKey={config.totalAcceptancesCount}
+              type="natural"
               fill="hsl(var(--chart-1))"
-              radius={4}
+              stroke="hsl(var(--chart-1))"
+              fillOpacity={0.6}
             />
             <ChartLegend content={<ChartLegendContent />} />
-          </BarChart>
+          </AreaChart>
         </ChartContainer>
       </CardContent>
     </Card>

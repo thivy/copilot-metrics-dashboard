@@ -31,13 +31,13 @@ export interface Breakdown {
   active_users: number;
 }
 
-const fetchData = async () => {
+export const getCopilotMetrics = async () => {
   const response = await fetch(
-    `https://api.github.com/enterprises/${process.env.GITHUB_ENTERPRISE}/copilot/usage`,
+    `https://api.github.com/orgs/${process.env.GITHUB_ENTERPRISE}/copilot/usage`,
     {
       headers: {
         Accept: `application/vnd.github+json`,
-        Authorization: `Bearer  ${process.env.GITHUB_TOKEN}`,
+        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
         "X-GitHub-Api-Version": "2022-11-28",
       },
     }
@@ -45,15 +45,15 @@ const fetchData = async () => {
 
   if (!response.ok) {
     // TODO: Handle error
-    throw new Error("Failed to fetch data");
+    return [];
   }
 
   const data = await response.json();
-
-  return data as CopilotUsage[];
+  const weekly = groupDataByTimeFrame(data);
+  return weekly;
 };
 
-export const getCopilotMetrics = (): Promise<CopilotUsageOutput[]> => {
+export const _getCopilotMetrics = (): Promise<CopilotUsageOutput[]> => {
   const promise = new Promise<CopilotUsageOutput[]>((resolve) => {
     setTimeout(() => {
       const weekly = groupDataByTimeFrame(data);
@@ -94,7 +94,7 @@ export const groupDataByTimeFrame = (
       ...item,
       time_frame_week: weekIdentifier,
       time_frame_month: monthIdentifier,
-      time_frame_display: "",
+      time_frame_display: weekIdentifier,
     };
     weekGroups.push(output);
   });

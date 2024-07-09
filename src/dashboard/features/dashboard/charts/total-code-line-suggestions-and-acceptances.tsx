@@ -2,7 +2,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { useDashboardData } from "../dashboard-state";
 
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import {
   ChartConfig,
@@ -26,7 +26,7 @@ export const TotalCodeLineSuggestionsAndAcceptances = () => {
       />
       <CardContent>
         <ChartContainer config={config.config} className="w-full h-80">
-          <BarChart
+          <AreaChart
             accessibilityLayer
             data={data}
             margin={{
@@ -50,18 +50,21 @@ export const TotalCodeLineSuggestionsAndAcceptances = () => {
               minTickGap={32}
             />
             <ChartTooltip cursor={true} content={<ChartTooltipContent />} />
-            <Bar
+            <Area
               dataKey={config.totalLinesSuggested}
+              type="natural"
               fill="hsl(var(--chart-2))"
-              radius={4}
-            />{" "}
-            <Bar
+              stroke="hsl(var(--chart-2))"
+            />
+            <Area
               dataKey={config.totalLinesAccepted}
+              type="natural"
               fill="hsl(var(--chart-1))"
-              radius={4}
+              fillOpacity={0.6}
+              stroke="hsl(var(--chart-1))"
             />
             <ChartLegend content={<ChartLegendContent />} />
-          </BarChart>
+          </AreaChart>
         </ChartContainer>
       </CardContent>
     </Card>

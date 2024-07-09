@@ -2,6 +2,7 @@ import { DatePickerWithRange } from "@/components/ui/data-picker";
 
 import { PageHeader, PageTitle } from "../page-header/page-header";
 import { Filters } from "./filter/header-filter";
+import { TimeFrameToggle } from "./filter/TimeFrameToggle";
 
 export const Header = () => {
   return (
@@ -9,7 +10,10 @@ export const Header = () => {
       <PageTitle>Dashboard</PageTitle>
       <div className="flex gap-8 justify-between">
         <Filters />
-        <DatePickerWithRange />
+        <div className="flex gap-2">
+          <TimeFrameToggle />
+          <DatePickerWithRange />
+        </div>
       </div>
     </PageHeader>
   );

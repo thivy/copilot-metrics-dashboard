@@ -19,7 +19,7 @@ export function Filters() {
   const { resetAllFilters } = useDashboardData();
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 flex-1">
       <DropdownFilter
         name={"Language"}
         allItems={allLanguages}

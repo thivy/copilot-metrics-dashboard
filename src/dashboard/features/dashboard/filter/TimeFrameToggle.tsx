@@ -1,5 +1,5 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar } from "lucide-react";
+import { Calendar, CalendarDays } from "lucide-react";
 
 export const TimeFrameToggle = () => {
   return (
@@ -9,7 +9,7 @@ export const TimeFrameToggle = () => {
           <Calendar size={16} /> Weekly
         </TabsTrigger>
         <TabsTrigger value="monthly" className="gap-2 font-normal">
-          <Calendar size={16} /> Monthly
+          <CalendarDays size={16} /> Monthly
         </TabsTrigger>
       </TabsList>
     </Tabs>

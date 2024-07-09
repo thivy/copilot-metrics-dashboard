@@ -74,10 +74,6 @@ export function DropdownFilter({
                       </div>
                       <span className="">
                         <span> {option.name} </span>
-                        <span className="font-semibold text-xs">
-                          {" "}
-                          {option.count}{" "}
-                        </span>
                       </span>
                     </CommandItem>
                   );

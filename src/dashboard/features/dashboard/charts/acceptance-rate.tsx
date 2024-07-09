@@ -125,9 +125,18 @@ export const useCompletionAverage = () => {
   let lastValue = 0;
 
   const rates = data.map((item) => {
+    let total_lines_accepted = 0;
+    let total_lines_suggested = 0;
+
+    item.breakdown.forEach((breakdown) => {
+      const { lines_accepted, lines_suggested } = breakdown;
+      total_lines_accepted += lines_accepted;
+      total_lines_suggested += lines_suggested;
+    });
+
     const completionAcceptanceRate =
-      item.total_lines_suggested !== 0
-        ? (item.total_lines_accepted / item.total_lines_suggested) * 100
+      total_lines_suggested !== 0
+        ? (total_lines_accepted / total_lines_suggested) * 100
         : 0;
 
     trend = completionAcceptanceRate < lastValue ? "down" : "up";

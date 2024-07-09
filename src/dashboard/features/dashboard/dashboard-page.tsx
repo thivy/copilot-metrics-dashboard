@@ -20,11 +20,11 @@ export default async function Dashboard() {
           <div className="grid grid-cols-4 gap-6">
             <Stats />
             <AcceptanceRate />
-            <TotalCodeLineSuggestionsAndAcceptances />
-            <TotalSuggestionsAndAcceptances />
             <Language />
             <Editor />
             <ActiveUsers />
+            <TotalCodeLineSuggestionsAndAcceptances />
+            <TotalSuggestionsAndAcceptances />
           </div>
         </div>
       </main>

@@ -28,7 +28,6 @@ interface IProps extends PropsWithChildren {
 
 export interface DropdownItem {
   name: string;
-  count: number;
 }
 
 const DashboardContext = createContext<State | undefined>(undefined);
@@ -42,9 +41,7 @@ const uniqueLanguages = (response: CopilotUsage[]) => {
       );
 
       if (index === -1) {
-        languages.push({ name: breakdown.language, count: 1 });
-      } else {
-        languages[index].count += 1;
+        languages.push({ name: breakdown.language });
       }
     });
   });
@@ -61,9 +58,7 @@ const uniqueEditors = (response: CopilotUsage[]) => {
       );
 
       if (index === -1) {
-        editors.push({ name: breakdown.editor, count: 1 });
-      } else {
-        editors[index].count += 1;
+        editors.push({ name: breakdown.editor });
       }
     });
   });

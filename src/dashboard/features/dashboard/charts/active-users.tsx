@@ -1,6 +1,6 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
-import { useDashboardData } from "../dashboard-state";
+import { useDashboard } from "../dashboard-state";
 
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
@@ -99,7 +99,7 @@ interface Data {
 type DataKey = keyof Data;
 
 export function useData(): Data[] {
-  const { data } = useDashboardData();
+  const { filteredData: data } = useDashboard();
 
   const rates = data.map((item) => {
     let totalUsers = item.total_active_users;

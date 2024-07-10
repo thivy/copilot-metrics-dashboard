@@ -2,42 +2,30 @@
 
 import { Button } from "@/components/ui/button";
 import { Eraser } from "lucide-react";
-import { useDashboardData } from "../dashboard-state";
+import { dashboardStore, useDashboard } from "../dashboard-state";
 import { DropdownFilter } from "./dropdown-filter";
 
 export function Filters() {
-  const { selectedEditors, filterEditor, allEditors, editorIsSelected } =
-    useDashboardData();
+  const { editors: allEditors } = useDashboard();
 
-  const {
-    selectedLanguages,
-    filterLanguage,
-    allLanguages,
-    languageIsSelected,
-  } = useDashboardData();
-
-  const { resetAllFilters } = useDashboardData();
+  const { languages: allLanguages } = useDashboard();
 
   return (
     <div className="flex gap-2 flex-1">
       <DropdownFilter
         name={"Language"}
         allItems={allLanguages}
-        itemIsSelected={languageIsSelected}
-        onSelect={filterLanguage}
-        selectedItems={selectedLanguages}
+        onSelect={(e) => dashboardStore.filterLanguage(e)}
       />
       <DropdownFilter
         name={"Editor"}
         allItems={allEditors}
-        itemIsSelected={editorIsSelected}
-        onSelect={filterEditor}
-        selectedItems={selectedEditors}
+        onSelect={(e) => dashboardStore.filterEditor(e)}
       />
       <Button
         variant={"secondary"}
         size={"icon"}
-        onClick={() => resetAllFilters()}
+        onClick={() => dashboardStore.resetAllFilters()}
       >
         <Eraser size={18} />
       </Button>

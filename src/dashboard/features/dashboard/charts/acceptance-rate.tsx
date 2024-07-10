@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { Trend } from "../copilot-metrics-service";
-import { useDashboardData } from "../dashboard-state";
+import { useDashboard } from "../dashboard-state";
 
 import {
   ChartConfig,
@@ -96,7 +96,7 @@ interface Data {
 type DataKey = keyof Data;
 
 function useData(): Data[] {
-  const { data } = useDashboardData();
+  const { filteredData: data } = useDashboard();
 
   const rates = data.map((item) => {
     const rate =
@@ -114,7 +114,7 @@ function useData(): Data[] {
 }
 
 export const useCompletionAverage = () => {
-  const { data } = useDashboardData();
+  const { filteredData: data } = useDashboard();
   let sum = 0;
   let trend: Trend = "up";
   let lastValue = 0;

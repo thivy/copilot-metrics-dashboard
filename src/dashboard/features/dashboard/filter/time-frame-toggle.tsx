@@ -1,10 +1,10 @@
 "use client";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { createContext, PropsWithChildren, useContext, useState } from "react";
-import { TimeFrame } from "../dashboard-state";
+import { dashboardStore, TimeFrame, useDashboard } from "../dashboard-state";
 
 export const TimeFrameToggle = () => {
-  const { selectedTimeFrame, setSelectedTimeFrame } = useTimeFrame();
+  const { timeFrame: selectedTimeFrame } = useDashboard();
   return (
     <Tabs defaultValue={selectedTimeFrame} className="">
       <TabsList className="grid w-full grid-cols-3">
@@ -12,7 +12,7 @@ export const TimeFrameToggle = () => {
           value="daily"
           className="gap-2 font-normal"
           onClick={() => {
-            setSelectedTimeFrame("daily");
+            dashboardStore.onTimeFrameChange("daily");
           }}
         >
           Daily
@@ -21,7 +21,7 @@ export const TimeFrameToggle = () => {
           value="weekly"
           className="gap-2 font-normal"
           onClick={() => {
-            setSelectedTimeFrame("weekly");
+            dashboardStore.onTimeFrameChange("weekly");
           }}
         >
           Weekly
@@ -30,7 +30,7 @@ export const TimeFrameToggle = () => {
           value="monthly"
           className="gap-2 font-normal"
           onClick={() => {
-            setSelectedTimeFrame("monthly");
+            dashboardStore.onTimeFrameChange("monthly");
           }}
         >
           Monthly

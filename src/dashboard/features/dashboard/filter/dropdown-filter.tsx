@@ -17,21 +17,17 @@ import {
 } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
 import { Sliders, Square, SquareCheck } from "lucide-react";
-import { DropdownItem } from "../dashboard-state";
+import { DropdownFilterItem } from "../dashboard-state";
 
-export function DropdownFilter({
-  name,
-  onSelect,
-  selectedItems,
-  allItems,
-  itemIsSelected,
-}: {
+interface DropdownFilterProps {
   name: string;
   onSelect: (name: string) => void;
-  selectedItems: DropdownItem[];
-  allItems: DropdownItem[];
-  itemIsSelected: (name: string) => boolean;
-}) {
+  allItems: DropdownFilterItem[];
+}
+
+export function DropdownFilter(props: DropdownFilterProps) {
+  const { name, onSelect, allItems } = props;
+
   return (
     <div className="flex items-center space-x-2">
       <Popover>
@@ -39,7 +35,9 @@ export function DropdownFilter({
           <Button variant={"outline"} className="space-x-2 font-normal">
             <Sliders size={16} />
             <span> {name}</span>
-            <Badge variant={"secondary"}>{selectedItems.length}</Badge>
+            <Badge variant={"secondary"}>
+              {allItems.filter((x) => x.isSelected).length}
+            </Badge>
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[200px] p-0" align="start">
@@ -51,14 +49,14 @@ export function DropdownFilter({
                 {allItems.map((option) => {
                   return (
                     <CommandItem
-                      key={option.name}
+                      key={option.value}
                       onSelect={onSelect}
-                      value={option.name}
+                      value={option.value}
                     >
                       <div
                         className={cn("mr-2 flex items-center justify-center")}
                       >
-                        {itemIsSelected(option.name) ? (
+                        {option.isSelected ? (
                           <SquareCheck
                             className={cn("text-muted-foreground")}
                             size={22}
@@ -73,7 +71,7 @@ export function DropdownFilter({
                         )}
                       </div>
                       <span className="">
-                        <span> {option.name} </span>
+                        <span> {option.value} </span>
                       </span>
                     </CommandItem>
                   );

@@ -1,6 +1,6 @@
 "use client";
 import { Trend } from "../copilot-metrics-service";
-import { useDashboardData } from "../dashboard-state";
+import { useDashboard } from "../dashboard-state";
 import { useCompletionAverage } from "./acceptance-rate";
 import StatsCard from "./stats-card";
 
@@ -44,7 +44,7 @@ export const Stats = () => {
 
 // daily average active users
 const useDailyAverageUsers = () => {
-  const { data } = useDashboardData();
+  const { filteredData: data } = useDashboard();
   let sum = 0;
   let chatSum = 0;
 

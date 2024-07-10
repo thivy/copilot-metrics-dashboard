@@ -2,7 +2,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useDashboardData } from "../dashboard-state";
+import { useDashboard } from "../dashboard-state";
 
 import {
   ChartConfig,
@@ -92,7 +92,7 @@ export function ListItems(props: { items: PieChartData[] }) {
 }
 
 function useData() {
-  const { data } = useDashboardData();
+  const { filteredData: data } = useDashboard();
   const languages: Array<PieChartData> = [];
 
   data.forEach((item) => {

@@ -1,7 +1,7 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
 
-import { useDashboardData } from "../dashboard-state";
+import { useDashboard } from "../dashboard-state";
 import { ListItems, PieChartData } from "./language";
 
 import { Pie, PieChart } from "recharts";
@@ -59,7 +59,7 @@ export const EditorChart = () => {
 const chartConfig = {} satisfies ChartConfig;
 
 function useData() {
-  const { data } = useDashboardData();
+  const { filteredData: data } = useDashboard();
   const editors: Array<PieChartData> = [];
 
   data.forEach((item) => {

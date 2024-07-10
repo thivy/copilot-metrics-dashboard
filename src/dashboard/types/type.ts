@@ -1,4 +1,8 @@
-const azureEnvVars = ["GITHUB_ENTERPRISE", "GITHUB_TOKEN"] as const;
+const azureEnvVars = [
+  "GITHUB_ENTERPRISE",
+  "GITHUB_TOKEN",
+  "GITHUB_ORGANIZATION",
+] as const;
 
 type RequiredServerEnvKeys = (typeof azureEnvVars)[number];
 

@@ -1,3 +1,4 @@
+import { ServerActionResponse } from "@/features/common/server-action-response";
 import { format, startOfWeek } from "date-fns";
 import { data } from "./sample-data";
 
@@ -32,37 +33,74 @@ export interface Breakdown {
   active_users: number;
 }
 
-// sleep function
-export const sleep = (ms: number) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
+export const getCopilotMetricsForOrgs = async (): Promise<
+  ServerActionResponse<CopilotUsageOutput[]>
+> => {
+  const organization = process.env.GITHUB_ORGANIZATION;
+  const enterprise = process.env.GITHUB_ENTERPRISE;
+  const token = process.env.GITHUB_TOKEN;
 
-export const getCopilotMetrics = async () => {
-  await sleep(5000);
-  const response = await fetch(
-    `https://api.github.com/orgs/${process.env.GITHUB_ENTERPRISE}/copilot/usage`,
-    {
-      headers: {
-        Accept: `application/vnd.github+json`,
-        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-        "X-GitHub-Api-Version": "2022-11-28",
-      },
-    }
-  );
-
-  if (!response.ok) {
-    // TODO: Handle error
-    return [];
+  if (!organization || !token || !enterprise) {
+    return {
+      status: "ERROR",
+      errors: [
+        {
+          message:
+            "Missing required environment variables for organization, GitHub token or enterprise",
+        },
+      ],
+    };
   }
 
-  const data = await response.json();
-  const weekly = groupDataByTimeFrame(data);
-  return weekly;
+  try {
+    const response = await fetch(
+      `https://api.github.com/orgs/${organization}/copilot/usage`,
+      {
+        headers: {
+          Accept: `application/vnd.github+json`,
+          Authorization: `Bearer ${token}`,
+          "X-GitHub-Api-Version": "2022-11-28",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      let message = response.statusText;
+
+      if (response.status === 404) {
+        message = `Organization with the name ${organization} was not found`;
+      }
+
+      if (response.status === 401) {
+        message =
+          "Authorization failed. Please verify that you have provided the correct token and ensure it has not expired.";
+      }
+
+      return {
+        status: "ERROR",
+        errors: [{ message }],
+      };
+    }
+
+    const data = await response.json();
+    const dataWithTimeFrame = applyTimeFrameLabel(data);
+    return {
+      status: "OK",
+      response: dataWithTimeFrame,
+    };
+  } catch (e) {
+    console.error(e);
+    return {
+      status: "ERROR",
+      errors: [{ message: "Failed to fetch data" }],
+    };
+  }
 };
 
 export const _getCopilotMetrics = (): Promise<CopilotUsageOutput[]> => {
   const promise = new Promise<CopilotUsageOutput[]>((resolve) => {
     setTimeout(() => {
-      const weekly = groupDataByTimeFrame(data);
+      const weekly = applyTimeFrameLabel(data);
       resolve(weekly);
     }, 1000);
   });
@@ -70,7 +108,7 @@ export const _getCopilotMetrics = (): Promise<CopilotUsageOutput[]> => {
   return promise;
 };
 
-export const groupDataByTimeFrame = (
+export const applyTimeFrameLabel = (
   data: CopilotUsage[]
 ): CopilotUsageOutput[] => {
   // Sort data by 'day'
@@ -78,7 +116,7 @@ export const groupDataByTimeFrame = (
     (a, b) => new Date(a.day).getTime() - new Date(b.day).getTime()
   );
 
-  const weekGroups: CopilotUsageOutput[] = [];
+  const dataWithTimeFrame: CopilotUsageOutput[] = [];
 
   sortedData.forEach((item) => {
     // Convert 'day' to a Date object and find the start of its week
@@ -95,8 +133,8 @@ export const groupDataByTimeFrame = (
       time_frame_month: monthIdentifier,
       time_frame_display: weekIdentifier,
     };
-    weekGroups.push(output);
+    dataWithTimeFrame.push(output);
   });
 
-  return weekGroups;
+  return dataWithTimeFrame;
 };

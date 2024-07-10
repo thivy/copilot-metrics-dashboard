@@ -1,3 +1,4 @@
+import { ErrorPage } from "../common/error-page";
 import { AcceptanceRate } from "./charts/acceptance-rate";
 import { ActiveUsers } from "./charts/active-users";
 import { Editor } from "./charts/editor";
@@ -8,13 +9,17 @@ import { TotalSuggestionsAndAcceptances } from "./charts/total-suggestions-and-a
 import { DataProvider } from "./dashboard-state";
 import { TimeFrameToggle } from "./filter/time-frame-toggle";
 import { Header } from "./header";
-import { getCopilotMetrics } from "./services/copilot-metrics-service";
+import { getCopilotMetricsForOrgs } from "./services/copilot-metrics-service";
 
 export default async function Dashboard() {
-  const allData = await getCopilotMetrics();
-  // TODO pass this to a client side store
+  const allData = await getCopilotMetricsForOrgs();
+
+  if (allData.status !== "OK") {
+    return <ErrorPage error={allData.errors[0].message} />;
+  }
+
   return (
-    <DataProvider apiData={allData}>
+    <DataProvider apiData={allData.response}>
       <main className="flex flex-1 flex-col gap-4 md:gap-8 pb-8">
         <Header />
 

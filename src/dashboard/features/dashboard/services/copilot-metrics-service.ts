@@ -1,5 +1,10 @@
+import {
+  formatResponseError,
+  unknownResponseError,
+} from "@/features/common/response-error";
 import { ServerActionResponse } from "@/features/common/server-action-response";
 import { format, startOfWeek } from "date-fns";
+import { ensureEnvironmentConfiguration } from "./env-service";
 import { data } from "./sample-data";
 
 export type Trend = "up" | "down";
@@ -36,21 +41,13 @@ export interface Breakdown {
 export const getCopilotMetricsForOrgs = async (): Promise<
   ServerActionResponse<CopilotUsageOutput[]>
 > => {
-  const organization = process.env.GITHUB_ORGANIZATION;
-  const enterprise = process.env.GITHUB_ENTERPRISE;
-  const token = process.env.GITHUB_TOKEN;
+  const env = ensureEnvironmentConfiguration();
 
-  if (!organization || !token || !enterprise) {
-    return {
-      status: "ERROR",
-      errors: [
-        {
-          message:
-            "Missing required environment variables for organization, GitHub token or enterprise",
-        },
-      ],
-    };
+  if (env.status !== "OK") {
+    return env;
   }
+
+  const { organization, token, version } = env.response;
 
   try {
     const response = await fetch(
@@ -59,27 +56,13 @@ export const getCopilotMetricsForOrgs = async (): Promise<
         headers: {
           Accept: `application/vnd.github+json`,
           Authorization: `Bearer ${token}`,
-          "X-GitHub-Api-Version": "2022-11-28",
+          "X-GitHub-Api-Version": version,
         },
       }
     );
 
     if (!response.ok) {
-      let message = response.statusText;
-
-      if (response.status === 404) {
-        message = `Organization with the name ${organization} was not found`;
-      }
-
-      if (response.status === 401) {
-        message =
-          "Authorization failed. Please verify that you have provided the correct token and ensure it has not expired.";
-      }
-
-      return {
-        status: "ERROR",
-        errors: [{ message }],
-      };
+      return formatResponseError(organization, response);
     }
 
     const data = await response.json();
@@ -89,11 +72,7 @@ export const getCopilotMetricsForOrgs = async (): Promise<
       response: dataWithTimeFrame,
     };
   } catch (e) {
-    console.error(e);
-    return {
-      status: "ERROR",
-      errors: [{ message: "Failed to fetch data" }],
-    };
+    return unknownResponseError(e);
   }
 };
 

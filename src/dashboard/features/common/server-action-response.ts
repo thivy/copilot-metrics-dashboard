@@ -4,12 +4,12 @@ export type ServerActionError = {
   message: string;
 };
 
-type ServerActionValidationError = {
+export type ServerActionValidationError = {
   status: "ERROR" | "NOT_FOUND" | "UNAUTHORIZED";
   errors: ServerActionError[];
 };
 
-type ServerActionSuccess<T = any> = {
+export type ServerActionSuccess<T = any> = {
   status: "OK";
   response: T;
 };

@@ -25,7 +25,7 @@ export interface SeatManagement {
 }
 
 export const getCopilotSeatsForOrgs = async (): Promise<
-  ServerActionResponse<SeatManagement[]>
+  ServerActionResponse<SeatManagement>
 > => {
   const env = ensureEnvironmentConfiguration();
 
@@ -52,10 +52,9 @@ export const getCopilotSeatsForOrgs = async (): Promise<
     }
 
     const data = await response.json();
-    console.log(data);
     return {
       status: "OK",
-      response: [],
+      response: data as SeatManagement,
     };
   } catch (e) {
     return unknownResponseError(e);

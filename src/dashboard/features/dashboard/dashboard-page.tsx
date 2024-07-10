@@ -10,16 +10,27 @@ import { DataProvider } from "./dashboard-state";
 import { TimeFrameToggle } from "./filter/time-frame-toggle";
 import { Header } from "./header";
 import { getCopilotMetricsForOrgs } from "./services/copilot-metrics-service";
+import { getCopilotSeatsForOrgs } from "./services/copilot-seat-service";
 
 export default async function Dashboard() {
-  const allData = await getCopilotMetricsForOrgs();
+  const allDataPromise = getCopilotMetricsForOrgs();
+  const usagePromise = getCopilotSeatsForOrgs();
+
+  const [allData, usage] = await Promise.all([allDataPromise, usagePromise]);
 
   if (allData.status !== "OK") {
     return <ErrorPage error={allData.errors[0].message} />;
   }
 
+  if (usage.status !== "OK") {
+    return <ErrorPage error={usage.errors[0].message} />;
+  }
+
   return (
-    <DataProvider apiData={allData.response}>
+    <DataProvider
+      copilotUsages={allData.response}
+      seatManagement={usage.response}
+    >
       <main className="flex flex-1 flex-col gap-4 md:gap-8 pb-8">
         <Header />
 

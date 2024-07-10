@@ -12,6 +12,16 @@ export const Stats = () => {
     activeUsersTrend,
     activeChatUsersTrend,
   } = useDailyAverageUsers();
+
+  const { seatManagement } = useDashboard();
+
+  const adoptionRate =
+    (seatManagement.seat_breakdown.active_this_cycle /
+      seatManagement.seat_breakdown.total) *
+    100;
+
+  console.log("adoptionRate", adoptionRate);
+
   return (
     <div className="grid grid-cols-4 gap-4 col-span-4">
       <StatsCard
@@ -23,8 +33,7 @@ export const Stats = () => {
       <StatsCard
         title="Adoption rate"
         description="Copilot adoption rate by active users"
-        value={total_active_chat_users.toFixed(0) + "%"}
-        trend={activeChatUsersTrend}
+        value={adoptionRate.toFixed(0) + "%"}
       ></StatsCard>
       <StatsCard
         title="Active users"

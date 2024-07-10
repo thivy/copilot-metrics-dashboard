@@ -1,66 +1,9 @@
-import { CopilotUsageOutput, formatDate } from "../copilot-metrics-service";
-import { DropdownFilterItem, TimeFrame } from "../dashboard-state";
+import { CopilotUsageOutput } from "../services/copilot-metrics-service";
 
-export const extractUniqueLanguages = (response: CopilotUsageOutput[]) => {
-  const languages: DropdownFilterItem[] = [];
-  response.forEach((item) => {
-    item.breakdown.forEach((breakdown) => {
-      const index = languages.findIndex(
-        (language) => language.value === breakdown.language
-      );
-
-      if (index === -1) {
-        languages.push({ value: breakdown.language, isSelected: false });
-      }
-    });
-  });
-
-  return languages;
-};
-
-export const extractUniqueEditors = (response: CopilotUsageOutput[]) => {
-  const editors: DropdownFilterItem[] = [];
-  response.forEach((item) => {
-    item.breakdown.forEach((breakdown) => {
-      const index = editors.findIndex(
-        (editor) => editor.value === breakdown.editor
-      );
-
-      if (index === -1) {
-        editors.push({ value: breakdown.editor, isSelected: false });
-      }
-    });
-  });
-
-  return editors;
-};
-
-export const aggregatedDataByTimeFrame = (
-  apiData: CopilotUsageOutput[],
-  timeFrame: TimeFrame
+export const groupByTimeFrame = (
+  groupedByTimeFrame: Record<string, CopilotUsageOutput[]>
 ) => {
-  const items = JSON.parse(
-    JSON.stringify(apiData)
-  ) as Array<CopilotUsageOutput>;
-
-  if (timeFrame === "daily") {
-    items.forEach((item) => {
-      item.time_frame_display = formatDate(item.day);
-    });
-    return items;
-  }
-
   const updatedResponse: CopilotUsageOutput[] = [];
-
-  const groupedByTimeFrame = items.reduce((acc, item) => {
-    const timeFrameLabel =
-      timeFrame === "weekly" ? item.time_frame_week : item.time_frame_month;
-    if (!acc[timeFrameLabel]) {
-      acc[timeFrameLabel] = [];
-    }
-    acc[timeFrameLabel].push(item);
-    return acc;
-  }, {} as Record<string, CopilotUsageOutput[]>);
 
   Object.keys(groupedByTimeFrame).forEach((week) => {
     const aggregatedData: CopilotUsageOutput = {

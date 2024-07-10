@@ -2,8 +2,8 @@
 import { Card, CardContent } from "@/components/ui/card";
 
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import { Trend } from "../copilot-metrics-service";
 import { useDashboard } from "../dashboard-state";
+import { Trend } from "../services/copilot-metrics-service";
 
 import {
   ChartConfig,

@@ -1,6 +1,6 @@
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { TrendingDown, TrendingUp } from "lucide-react";
-import { Trend } from "../copilot-metrics-service";
+import { Trend } from "../services/copilot-metrics-service";
 import { ChartHeader } from "./chart-header";
 
 interface StatsCardProps {

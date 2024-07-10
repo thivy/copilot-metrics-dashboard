@@ -1,27 +1,11 @@
 "use client";
 
 import { PropsWithChildren } from "react";
-import { CopilotUsageOutput } from "./copilot-metrics-service";
-import {
-  aggregatedDataByTimeFrame,
-  extractUniqueEditors,
-  extractUniqueLanguages,
-} from "./filter/helpers";
+import { CopilotUsageOutput } from "./services/copilot-metrics-service";
+import { formatDate } from "./utils/helpers";
 
 import { proxy, useSnapshot } from "valtio";
-
-interface State {
-  data: CopilotUsageOutput[];
-  allLanguages: DropdownFilterItem[];
-  allEditors: DropdownFilterItem[];
-  selectedLanguages: DropdownFilterItem[];
-  selectedEditors: DropdownFilterItem[];
-  filterLanguage: (language: string) => void;
-  filterEditor: (editor: string) => void;
-  resetAllFilters: () => void;
-  editorIsSelected: (editor: string) => boolean;
-  languageIsSelected: (language: string) => boolean;
-}
+import { groupByTimeFrame } from "./utils/data-mapper";
 
 interface IProps extends PropsWithChildren {
   apiData: CopilotUsageOutput[];
@@ -45,8 +29,8 @@ class DashboardState {
   public initData(data: CopilotUsageOutput[]): void {
     this.apiData = [...data];
     this.onTimeFrameChange(this.timeFrame);
-    this.languages = extractUniqueLanguages(data);
-    this.editors = extractUniqueEditors(data);
+    this.languages = this.extractUniqueLanguages();
+    this.editors = this.extractUniqueEditors();
   }
 
   public filterLanguage(language: string): void {
@@ -72,7 +56,7 @@ class DashboardState {
   }
 
   public onTimeFrameChange(timeFrame: TimeFrame): void {
-    const dataByWeek = aggregatedDataByTimeFrame(this.apiData, timeFrame);
+    const dataByWeek = this.aggregatedDataByTimeFrame(timeFrame);
     this.filteredData = dataByWeek;
   }
 
@@ -106,6 +90,69 @@ class DashboardState {
 
     const filtered = items.filter((item) => item.breakdown.length > 0);
     this.filteredData = filtered;
+  }
+
+  private extractUniqueLanguages(): DropdownFilterItem[] {
+    const languages: DropdownFilterItem[] = [];
+
+    this.apiData.forEach((item) => {
+      item.breakdown.forEach((breakdown) => {
+        const index = languages.findIndex(
+          (language) => language.value === breakdown.language
+        );
+
+        if (index === -1) {
+          languages.push({ value: breakdown.language, isSelected: false });
+        }
+      });
+    });
+
+    return languages;
+  }
+
+  private extractUniqueEditors(): DropdownFilterItem[] {
+    const editors: DropdownFilterItem[] = [];
+    this.apiData.forEach((item) => {
+      item.breakdown.forEach((breakdown) => {
+        const index = editors.findIndex(
+          (editor) => editor.value === breakdown.editor
+        );
+
+        if (index === -1) {
+          editors.push({ value: breakdown.editor, isSelected: false });
+        }
+      });
+    });
+
+    return editors;
+  }
+
+  private aggregatedDataByTimeFrame(timeFrame: TimeFrame) {
+    const items = JSON.parse(
+      JSON.stringify(this.apiData)
+    ) as Array<CopilotUsageOutput>;
+
+    if (timeFrame === "daily") {
+      items.forEach((item) => {
+        item.time_frame_display = formatDate(item.day);
+      });
+      return items;
+    }
+
+    const groupedByTimeFrame = items.reduce((acc, item) => {
+      const timeFrameLabel =
+        timeFrame === "weekly" ? item.time_frame_week : item.time_frame_month;
+      if (!acc[timeFrameLabel]) {
+        acc[timeFrameLabel] = [];
+      }
+      acc[timeFrameLabel].push(item);
+      return acc;
+    }, {} as Record<string, CopilotUsageOutput[]>);
+
+    const updatedResponse: CopilotUsageOutput[] =
+      groupByTimeFrame(groupedByTimeFrame);
+
+    return updatedResponse;
   }
 }
 

@@ -5,10 +5,10 @@ import { Language } from "./charts/language";
 import { Stats } from "./charts/stats";
 import { TotalCodeLineSuggestionsAndAcceptances } from "./charts/total-code-line-suggestions-and-acceptances";
 import { TotalSuggestionsAndAcceptances } from "./charts/total-suggestions-and-acceptances";
-import { getCopilotMetrics } from "./copilot-metrics-service";
 import { DataProvider } from "./dashboard-state";
 import { TimeFrameToggle } from "./filter/time-frame-toggle";
 import { Header } from "./header";
+import { getCopilotMetrics } from "./services/copilot-metrics-service";
 
 export default async function Dashboard() {
   const allData = await getCopilotMetrics();

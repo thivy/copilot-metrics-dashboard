@@ -1,6 +1,6 @@
 "use client";
-import { Trend } from "../copilot-metrics-service";
 import { useDashboard } from "../dashboard-state";
+import { Trend } from "../services/copilot-metrics-service";
 import { useCompletionAverage } from "./acceptance-rate";
 import StatsCard from "./stats-card";
 

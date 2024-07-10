@@ -32,7 +32,12 @@ export interface Breakdown {
   active_users: number;
 }
 
+// sleep function
+export const sleep = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
+
 export const getCopilotMetrics = async () => {
+  await sleep(5000);
   const response = await fetch(
     `https://api.github.com/orgs/${process.env.GITHUB_ENTERPRISE}/copilot/usage`,
     {

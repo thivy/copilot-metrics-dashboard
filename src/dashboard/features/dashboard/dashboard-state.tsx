@@ -35,6 +35,7 @@ class DashboardState {
     seatManagement: SeatManagement
   ): void {
     this.apiData = [...data];
+    this.filteredData = [...data];
     this.onTimeFrameChange(this.timeFrame);
     this.languages = this.extractUniqueLanguages();
     this.editors = this.extractUniqueEditors();
@@ -64,20 +65,18 @@ class DashboardState {
   }
 
   public onTimeFrameChange(timeFrame: TimeFrame): void {
-    const dataByWeek = this.aggregatedDataByTimeFrame(timeFrame);
-    this.filteredData = dataByWeek;
+    this.timeFrame = timeFrame;
+    this.applyFilters();
   }
 
   private applyFilters(): void {
-    const items = JSON.parse(
-      JSON.stringify(this.apiData)
-    ) as Array<CopilotUsageOutput>;
+    const data = this.aggregatedDataByTimeFrame();
 
     const selectedLanguages = this.languages.filter((item) => item.isSelected);
     const selectedEditors = this.editors.filter((item) => item.isSelected);
 
     if (selectedLanguages.length !== 0) {
-      items.forEach((item) => {
+      data.forEach((item) => {
         const filtered = item.breakdown.filter((breakdown) =>
           selectedLanguages.some(
             (selectedLanguage) => selectedLanguage.value === breakdown.language
@@ -88,7 +87,7 @@ class DashboardState {
     }
 
     if (selectedEditors.length !== 0) {
-      items.forEach((item) => {
+      data.forEach((item) => {
         const filtered = item.breakdown.filter((breakdown) =>
           selectedEditors.some((editor) => editor.value === breakdown.editor)
         );
@@ -96,7 +95,7 @@ class DashboardState {
       });
     }
 
-    const filtered = items.filter((item) => item.breakdown.length > 0);
+    const filtered = data.filter((item) => item.breakdown.length > 0);
     this.filteredData = filtered;
   }
 
@@ -135,12 +134,12 @@ class DashboardState {
     return editors;
   }
 
-  private aggregatedDataByTimeFrame(timeFrame: TimeFrame) {
+  private aggregatedDataByTimeFrame() {
     const items = JSON.parse(
       JSON.stringify(this.apiData)
     ) as Array<CopilotUsageOutput>;
 
-    if (timeFrame === "daily") {
+    if (this.timeFrame === "daily") {
       items.forEach((item) => {
         item.time_frame_display = formatDate(item.day);
       });
@@ -149,18 +148,20 @@ class DashboardState {
 
     const groupedByTimeFrame = items.reduce((acc, item) => {
       const timeFrameLabel =
-        timeFrame === "weekly" ? item.time_frame_week : item.time_frame_month;
+        this.timeFrame === "weekly"
+          ? item.time_frame_week
+          : item.time_frame_month;
+
       if (!acc[timeFrameLabel]) {
         acc[timeFrameLabel] = [];
       }
+
       acc[timeFrameLabel].push(item);
+
       return acc;
     }, {} as Record<string, CopilotUsageOutput[]>);
 
-    const updatedResponse: CopilotUsageOutput[] =
-      groupByTimeFrame(groupedByTimeFrame);
-
-    return updatedResponse;
+    return groupByTimeFrame(groupedByTimeFrame);
   }
 }
 

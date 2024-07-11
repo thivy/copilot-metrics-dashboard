@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using GitHub;
+﻿using GitHub;
 using GitHub.Models;
 using GitHub.Octokit.Authentication;
 using GitHub.Octokit.Client;
@@ -22,9 +21,9 @@ public class CoPilotDataIngestion
     [Function("CoPilotDataIngestion")]
     [CosmosDBOutput(databaseName: "platform-engineering", containerName: "history",
         Connection = "AZURE_COSMOSDB_CONNECTION_STRING", CreateIfNotExists = false)]
-    public async Task<Domain.CopilotUsageMetrics> Run(
-        //[TimerTrigger("*/10 * * * * *")] TimerInfo myTimer)
-        [TimerTrigger("0 0 1 * * *")] TimerInfo myTimer)
+    public async Task<List<Domain.CopilotUsageMetrics>> Run(
+    //[TimerTrigger("*/5 * * * * *")] TimerInfo myTimer)
+    [TimerTrigger("0 0 1 * * *")] TimerInfo myTimer)
     {
         _logger.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
 
@@ -43,9 +42,7 @@ public class CoPilotDataIngestion
             _logger.LogInformation($"Finished ingestion. Next timer schedule at: {myTimer.ScheduleStatus.Next}");
         }
 
-        var test = JsonSerializer.Serialize(usage.Single());
-
-        return usage.Single();
+        return usage;
     }
 
     private Task<List<Domain.CopilotUsageMetrics>> FetchGithubCoPilotUsageDataTest()
@@ -75,12 +72,7 @@ public class CoPilotDataIngestion
                 DateTimeOffset.UtcNow.Date.ToString("R"));
 
             var usage = await githubClient.Orgs[Environment.GetEnvironmentVariable("GITHUB_NAME")].Copilot.Usage
-                .GetAsync(parameters =>
-                {
-                    var now = DateTimeOffset.UtcNow;
-                    parameters.QueryParameters.Since = now.AddDays(-1).ToString("O");
-                    parameters.QueryParameters.Until = now.ToString("O");
-                });
+                .GetAsync();
 
             return usage!.Select(Domain.CopilotUsageMetrics.FromOctokit).ToList();
         }
@@ -89,12 +81,7 @@ public class CoPilotDataIngestion
             _logger.LogInformation("Fetching CoPilot data for Github Enterprise {Today}",
                 DateTimeOffset.UtcNow.Date.ToString("R"));
 
-            var usage = await githubClient.Enterprises["GITHUB_NAME"].Copilot.Usage.GetAsync(parameters =>
-            {
-                var now = DateTimeOffset.UtcNow;
-                parameters.QueryParameters.Since = now.AddDays(-1).ToString("O");
-                parameters.QueryParameters.Until = now.ToString("O");
-            });
+            var usage = await githubClient.Enterprises["GITHUB_NAME"].Copilot.Usage.GetAsync();
 
             return usage!.Select(Domain.CopilotUsageMetrics.FromOctokit).ToList();
         }

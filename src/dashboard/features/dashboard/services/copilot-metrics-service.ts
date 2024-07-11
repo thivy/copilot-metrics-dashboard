@@ -53,6 +53,7 @@ export const getCopilotMetricsForOrgs = async (): Promise<
     const response = await fetch(
       `https://api.github.com/orgs/${organization}/copilot/usage`,
       {
+        cache: "no-store",
         headers: {
           Accept: `application/vnd.github+json`,
           Authorization: `Bearer ${token}`,

@@ -39,6 +39,7 @@ export const getCopilotSeatsForOrgs = async (): Promise<
     const response = await fetch(
       `https://api.github.com/orgs/${organization}/copilot/billing`,
       {
+        cache: "no-store",
         headers: {
           Accept: `application/vnd.github+json`,
           Authorization: `Bearer ${token}`,

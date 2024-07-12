@@ -16,9 +16,14 @@ import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 
 export const DateFilter = () => {
+  const today = new Date();
+  // last 31 days
+  const lastThirtyOneDays = new Date(today);
+  lastThirtyOneDays.setDate(today.getDate() - 31);
+
   const [date, setDate] = React.useState<DateRange | undefined>({
-    from: undefined,
-    to: undefined,
+    from: lastThirtyOneDays,
+    to: today,
   });
 
   const [isOpen, setIsOpen] = React.useState(false);

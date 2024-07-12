@@ -4,6 +4,7 @@ import {
 } from "@/features/common/response-error";
 import { ServerActionResponse } from "@/features/common/server-action-response";
 import { format, startOfWeek } from "date-fns";
+import { cosmosClient } from "./cosmos-db-service";
 import { ensureEnvironmentConfiguration } from "./env-service";
 import { data } from "./sample-data";
 
@@ -41,6 +42,21 @@ export interface Breakdown {
 export const getCopilotMetricsForOrgs = async (): Promise<
   ServerActionResponse<CopilotUsageOutput[]>
 > => {
+  const endpoint = process.env.AZURE_COSMOSDB_ENDPOINT;
+  const key = process.env.AZURE_COSMOSDB_KEY;
+
+  // If we have the required environment variables, we can use the database
+  if (endpoint && key) {
+    console.log("Using database");
+    return getCopilotMetricsForOrgsFromDatabase();
+  }
+
+  return getCopilotMetricsForOrgsFromApi();
+};
+
+export const getCopilotMetricsForOrgsFromApi = async (): Promise<
+  ServerActionResponse<CopilotUsageOutput[]>
+> => {
   const env = ensureEnvironmentConfiguration();
 
   if (env.status !== "OK") {
@@ -75,6 +91,28 @@ export const getCopilotMetricsForOrgs = async (): Promise<
   } catch (e) {
     return unknownResponseError(e);
   }
+};
+
+export const getCopilotMetricsForOrgsFromDatabase = async (): Promise<
+  ServerActionResponse<CopilotUsageOutput[]>
+> => {
+  const client = cosmosClient();
+  const database = client.database("platform-engineering");
+  const container = database.container("history");
+
+  const querySpec = {
+    query: "SELECT * FROM c",
+  };
+
+  const { resources } = await container.items
+    .query<CopilotUsageOutput>(querySpec)
+    .fetchAll();
+
+  const dataWithTimeFrame = applyTimeFrameLabel(resources);
+  return {
+    status: "OK",
+    response: dataWithTimeFrame,
+  };
 };
 
 export const _getCopilotMetrics = (): Promise<CopilotUsageOutput[]> => {

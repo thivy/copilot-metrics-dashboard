@@ -17,7 +17,6 @@ import { ChartHeader } from "./chart-header";
 export const TotalCodeLineSuggestionsAndAcceptances = () => {
   const data = useData();
   const config = chartConfig();
-
   return (
     <Card className="col-span-4">
       <ChartHeader
@@ -52,13 +51,13 @@ export const TotalCodeLineSuggestionsAndAcceptances = () => {
             <ChartTooltip cursor={true} content={<ChartTooltipContent />} />
             <Area
               dataKey={config.totalLinesSuggested}
-              type="natural"
+              type="linear"
               fill="hsl(var(--chart-2))"
               stroke="hsl(var(--chart-2))"
             />
             <Area
               dataKey={config.totalLinesAccepted}
-              type="natural"
+              type="linear"
               fill="hsl(var(--chart-1))"
               fillOpacity={0.6}
               stroke="hsl(var(--chart-1))"

@@ -9,11 +9,18 @@ import { TotalSuggestionsAndAcceptances } from "./charts/total-suggestions-and-a
 import { DataProvider } from "./dashboard-state";
 import { TimeFrameToggle } from "./filter/time-frame-toggle";
 import { Header } from "./header";
-import { getCopilotMetricsForOrgs } from "./services/copilot-metrics-service";
+import {
+  getCopilotMetricsForOrgs,
+  IFilter,
+} from "./services/copilot-metrics-service";
 import { getCopilotSeatsForOrgs } from "./services/copilot-seat-service";
 
-export default async function Dashboard() {
-  const allDataPromise = getCopilotMetricsForOrgs();
+interface IProps {
+  searchParams: IFilter;
+}
+
+export default async function Dashboard(props: IProps) {
+  const allDataPromise = getCopilotMetricsForOrgs(props.searchParams);
   const usagePromise = getCopilotSeatsForOrgs();
 
   const [allData, usage] = await Promise.all([allDataPromise, usagePromise]);

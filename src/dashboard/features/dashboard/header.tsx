@@ -1,6 +1,5 @@
-import { DatePickerWithRange } from "@/components/ui/data-picker";
-
 import { PageHeader, PageTitle } from "../page-header/page-header";
+import { DateFilter } from "./filter/date-filter";
 import { Filters } from "./filter/header-filter";
 
 export const Header = () => {
@@ -10,7 +9,7 @@ export const Header = () => {
       <div className="flex gap-8 justify-between">
         <Filters />
         <div className="flex gap-2">
-          <DatePickerWithRange />
+          <DateFilter />
         </div>
       </div>
     </PageHeader>

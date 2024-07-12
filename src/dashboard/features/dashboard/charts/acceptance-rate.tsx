@@ -57,7 +57,7 @@ export const AcceptanceRate = () => {
             <ChartTooltip cursor={true} content={<ChartTooltipContent />} />
             <Area
               dataKey={config.completionAcceptanceRate}
-              type="natural"
+              type="linear"
               fill="hsl(var(--chart-1))"
               fillOpacity={0.4}
               stroke="hsl(var(--chart-1))"

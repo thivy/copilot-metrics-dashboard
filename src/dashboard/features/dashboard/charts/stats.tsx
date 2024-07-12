@@ -20,8 +20,6 @@ export const Stats = () => {
       seatManagement.seat_breakdown.total) *
     100;
 
-  console.log("adoptionRate", adoptionRate);
-
   return (
     <div className="grid grid-cols-4 gap-4 col-span-4">
       <StatsCard

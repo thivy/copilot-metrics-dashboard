@@ -43,13 +43,13 @@ export const TotalSuggestionsAndAcceptances = () => {
             <ChartTooltip cursor={true} content={<ChartTooltipContent />} />
             <Area
               dataKey={config.totalSuggestionsCount}
-              type="natural"
+              type="linear"
               fill="hsl(var(--chart-2))"
               stroke="hsl(var(--chart-2))"
             />
             <Area
               dataKey={config.totalAcceptancesCount}
-              type="natural"
+              type="linear"
               fill="hsl(var(--chart-1))"
               stroke="hsl(var(--chart-1))"
               fillOpacity={0.6}

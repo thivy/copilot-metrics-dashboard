@@ -3,6 +3,7 @@ import {
   unknownResponseError,
 } from "@/features/common/response-error";
 import { ServerActionResponse } from "@/features/common/server-action-response";
+import { SqlQuerySpec } from "@azure/cosmos";
 import { format, startOfWeek } from "date-fns";
 import { cosmosClient } from "./cosmos-db-service";
 import { ensureEnvironmentConfiguration } from "./env-service";
@@ -39,19 +40,30 @@ export interface Breakdown {
   active_users: number;
 }
 
-export const getCopilotMetricsForOrgs = async (): Promise<
-  ServerActionResponse<CopilotUsageOutput[]>
-> => {
-  const endpoint = process.env.AZURE_COSMOSDB_ENDPOINT;
-  const key = process.env.AZURE_COSMOSDB_KEY;
+export interface IFilter {
+  startDate?: Date;
+  endDate?: Date;
+}
 
-  // If we have the required environment variables, we can use the database
-  if (endpoint && key) {
-    console.log("Using database");
-    return getCopilotMetricsForOrgsFromDatabase();
+export const getCopilotMetricsForOrgs = async (
+  filter: IFilter
+): Promise<ServerActionResponse<CopilotUsageOutput[]>> => {
+  try {
+    const endpoint = process.env.AZURE_COSMOSDB_ENDPOINT;
+    const key = process.env.AZURE_COSMOSDB_KEY;
+
+    // If we have the required environment variables, we can use the database
+    if (endpoint && key) {
+      return getCopilotMetricsForOrgsFromDatabase(filter);
+    }
+
+    return getCopilotMetricsForOrgsFromApi();
+  } catch (e) {
+    return {
+      status: "ERROR",
+      errors: [{ message: "" + e }],
+    };
   }
-
-  return getCopilotMetricsForOrgsFromApi();
 };
 
 export const getCopilotMetricsForOrgsFromApi = async (): Promise<
@@ -93,19 +105,42 @@ export const getCopilotMetricsForOrgsFromApi = async (): Promise<
   }
 };
 
-export const getCopilotMetricsForOrgsFromDatabase = async (): Promise<
-  ServerActionResponse<CopilotUsageOutput[]>
-> => {
+export const getCopilotMetricsForOrgsFromDatabase = async (
+  filter: IFilter
+): Promise<ServerActionResponse<CopilotUsageOutput[]>> => {
   const client = cosmosClient();
   const database = client.database("platform-engineering");
   const container = database.container("history");
 
-  const querySpec = {
-    query: "SELECT * FROM c",
-  };
+  let start = "";
+  let end = "";
+  const maxDays = 365 * 2; // maximum 2 years of data
+  const maximumDays = 31;
 
+  if (filter.startDate && filter.endDate) {
+    start = format(filter.startDate, "yyyy-MM-dd");
+    end = format(filter.endDate, "yyyy-MM-dd");
+  } else {
+    // set the start date to today and the end date to 31 days ago
+    const todayDate = new Date();
+    const startDate = new Date(todayDate);
+    startDate.setDate(todayDate.getDate() - maximumDays);
+
+    start = format(startDate, "yyyy-MM-dd");
+    end = format(todayDate, "yyyy-MM-dd");
+  }
+
+  let querySpec: SqlQuerySpec = {
+    query: `SELECT * FROM c WHERE c.day >= @start AND c.day <= @end`,
+    parameters: [
+      { name: "@start", value: start },
+      { name: "@end", value: end },
+    ],
+  };
   const { resources } = await container.items
-    .query<CopilotUsageOutput>(querySpec)
+    .query<CopilotUsageOutput>(querySpec, {
+      maxItemCount: maxDays,
+    })
     .fetchAll();
 
   const dataWithTimeFrame = applyTimeFrameLabel(resources);

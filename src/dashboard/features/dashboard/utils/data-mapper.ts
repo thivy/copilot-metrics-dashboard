@@ -34,22 +34,6 @@ export const groupByTimeFrame = (
       aggregatedData.total_chat_turns += item.total_chat_turns;
       aggregatedData.total_active_chat_users += item.total_active_chat_users;
 
-      // is last item
-      if (index === timeFrameLength - 1) {
-        aggregatedData.time_frame_month = item.time_frame_month;
-        aggregatedData.time_frame_week = item.time_frame_week;
-        aggregatedData.total_suggestions_count /= timeFrameLength;
-        aggregatedData.total_acceptances_count /= timeFrameLength;
-        aggregatedData.total_lines_suggested /= timeFrameLength;
-        aggregatedData.total_lines_accepted /= timeFrameLength;
-        aggregatedData.total_active_users /= timeFrameLength;
-        aggregatedData.total_chat_acceptances /= timeFrameLength;
-        aggregatedData.total_chat_turns /= timeFrameLength;
-        aggregatedData.total_active_chat_users /= timeFrameLength;
-      }
-
-      const breakdownLength = item.breakdown.length;
-
       item.breakdown.forEach((breakdownItem) => {
         const existingIndex = aggregatedData.breakdown.findIndex(
           (bd) =>
@@ -70,17 +54,6 @@ export const groupByTimeFrame = (
             breakdownItem.active_users;
         } else {
           aggregatedData.breakdown.push(breakdownItem);
-        }
-
-        // is last item
-        if (index === breakdownLength - 1) {
-          aggregatedData.breakdown.forEach((bd) => {
-            bd.suggestions_count /= breakdownLength;
-            bd.acceptances_count /= breakdownLength;
-            bd.lines_suggested /= breakdownLength;
-            bd.lines_accepted /= breakdownLength;
-            bd.active_users /= breakdownLength;
-          });
         }
       });
     });

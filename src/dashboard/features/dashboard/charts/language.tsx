@@ -14,7 +14,7 @@ import { Pie, PieChart } from "recharts";
 import { ChartHeader } from "./chart-header";
 export const Language = () => {
   return (
-    <Card className="col-span-2">
+    <Card className="col-span-4 md:col-span-2">
       <ChartHeader
         title="Language"
         description="Percentage of active users per language"

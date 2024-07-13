@@ -21,7 +21,7 @@ export const Stats = () => {
     100;
 
   return (
-    <div className="grid grid-cols-4 gap-4 col-span-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 col-span-4">
       <StatsCard
         title="Completion Average"
         description="Inline code acceptance average"

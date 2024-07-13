@@ -5,7 +5,7 @@ import {
 import { ServerActionResponse } from "@/features/common/server-action-response";
 import { SqlQuerySpec } from "@azure/cosmos";
 import { format, startOfWeek } from "date-fns";
-import { cosmosClient } from "./cosmos-db-service";
+import { cosmosClient, cosmosConfiguration } from "./cosmos-db-service";
 import { ensureEnvironmentConfiguration } from "./env-service";
 import { data } from "./sample-data";
 
@@ -49,11 +49,9 @@ export const getCopilotMetricsForOrgs = async (
   filter: IFilter
 ): Promise<ServerActionResponse<CopilotUsageOutput[]>> => {
   try {
-    const endpoint = process.env.AZURE_COSMOSDB_ENDPOINT;
-    const key = process.env.AZURE_COSMOSDB_KEY;
-
+    const isCosmosConfig = cosmosConfiguration();
     // If we have the required environment variables, we can use the database
-    if (endpoint && key) {
+    if (isCosmosConfig) {
       return getCopilotMetricsForOrgsFromDatabase(filter);
     }
 
@@ -137,6 +135,7 @@ export const getCopilotMetricsForOrgsFromDatabase = async (
       { name: "@end", value: end },
     ],
   };
+
   const { resources } = await container.items
     .query<CopilotUsageOutput>(querySpec, {
       maxItemCount: maxDays,
@@ -177,7 +176,7 @@ export const applyTimeFrameLabel = (
     const weekStart = startOfWeek(date, { weekStartsOn: 1 });
 
     // Create a unique week identifier
-    const weekIdentifier = format(weekStart, "MMM yy 'W'I");
+    const weekIdentifier = format(weekStart, "MMM dd");
     const monthIdentifier = format(date, "MMM yy");
 
     const output: CopilotUsageOutput = {

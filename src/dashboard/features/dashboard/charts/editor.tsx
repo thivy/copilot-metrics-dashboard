@@ -15,7 +15,7 @@ import {
 import { ChartHeader } from "./chart-header";
 export const Editor = () => {
   return (
-    <Card className="col-span-2">
+    <Card className="col-span-4 md:col-span-2">
       <ChartHeader
         title="Editor"
         description="Percentage of active users per editor"

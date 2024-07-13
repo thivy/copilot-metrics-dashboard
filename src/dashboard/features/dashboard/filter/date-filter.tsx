@@ -3,7 +3,6 @@
 import { CalendarIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
 import * as React from "react";
-import { DateRange } from "react-day-picker";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -21,7 +20,10 @@ export const DateFilter = () => {
   const lastThirtyOneDays = new Date(today);
   lastThirtyOneDays.setDate(today.getDate() - 31);
 
-  const [date, setDate] = React.useState<DateRange | undefined>({
+  const [date, setDate] = React.useState<{
+    from: Date;
+    to: Date;
+  }>({
     from: lastThirtyOneDays,
     to: today,
   });
@@ -31,19 +33,15 @@ export const DateFilter = () => {
   const router = useRouter();
 
   const applyFilters = () => {
-    if (!date) return;
+    const formatEndDate = format(date.to, "yyyy-MM-dd");
+    const formatStartDate = format(date.from, "yyyy-MM-dd");
 
-    if (date?.from && date?.to) {
-      const formatEndDate = format(date?.to, "yyyy-MM-dd");
-      const formatStartDate = format(date?.from, "yyyy-MM-dd");
-
-      router.replace(
-        `/dashboard?startDate=${formatStartDate}&endDate=${formatEndDate}`,
-        { scroll: false }
-      );
-      router.refresh();
-      setIsOpen(false);
-    }
+    router.push(
+      `/dashboard?startDate=${formatStartDate}&endDate=${formatEndDate}`,
+      { scroll: false }
+    );
+    router.refresh();
+    setIsOpen(false);
   };
 
   return (

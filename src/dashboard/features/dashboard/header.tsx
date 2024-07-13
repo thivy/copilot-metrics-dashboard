@@ -6,7 +6,7 @@ export const Header = () => {
   return (
     <PageHeader>
       <PageTitle>Dashboard</PageTitle>
-      <div className="flex gap-8 justify-between">
+      <div className="flex gap-8 justify-between flex-col md:flex-row">
         <Filters />
         <div className="flex gap-2">
           <DateFilter />

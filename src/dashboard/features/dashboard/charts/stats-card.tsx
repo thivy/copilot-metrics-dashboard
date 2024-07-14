@@ -12,10 +12,12 @@ interface StatsCardProps {
 
 export default function StatsCard(props: StatsCardProps) {
   return (
-    <Card>
+    <Card className="flex flex-col">
       <ChartHeader title={props.title} description={props.description} />
-      <CardContent className="flex items-center">
-        <CardTitle className="text-4xl flex-1">{props.value}</CardTitle>
+      <CardContent className="flex items-center justify-center flex-1 py-0">
+        <CardTitle className="text-[2.8rem] flex-1 tracking-tighter font-bold">
+          {props.value}
+        </CardTitle>
         {props.trend &&
           (props.trend === "up" ? (
             <TrendingUp size={16} className="stroke-lime-500" />

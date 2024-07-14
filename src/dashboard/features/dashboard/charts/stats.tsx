@@ -1,7 +1,9 @@
 "use client";
+import { Card, CardContent } from "@/components/ui/card";
 import { useDashboard } from "../dashboard-state";
 import { Trend } from "../services/copilot-metrics-service";
 import { useCompletionAverage } from "./acceptance-rate";
+import { ChartHeader } from "./chart-header";
 import StatsCard from "./stats-card";
 
 export const Stats = () => {
@@ -29,23 +31,45 @@ export const Stats = () => {
         trend={data.trend}
       ></StatsCard>
       <StatsCard
-        title="Adoption rate"
-        description="Copilot adoption rate by active users"
-        value={adoptionRate.toFixed(0) + "%"}
-      ></StatsCard>
-      <StatsCard
         title="Active users"
         description="Average active users"
         value={total_active_users.toFixed(0) + ""}
         trend={activeUsersTrend}
       ></StatsCard>
       <StatsCard
-        title="Active chat users"
-        description="Average active chat users"
-        value={total_active_chat_users.toFixed(0) + ""}
-        trend={activeChatUsersTrend}
+        title="Adoption rate"
+        description="Copilot adoption rate by active users"
+        value={adoptionRate.toFixed(0) + "%"}
       ></StatsCard>
+      <Overview />
     </div>
+  );
+};
+
+export const Overview = () => {
+  const Item = ({ label, value }: { label: string; value: number }) => (
+    <div className="flex-1 flex flex-row gap-2">
+      <div className="text-xs flex-1 text-muted-foreground">{label}</div>
+      <div className="text-xs ">{value}</div>
+    </div>
+  );
+
+  const { seatManagement } = useDashboard();
+  const { total, active_this_cycle, inactive_this_cycle } =
+    seatManagement.seat_breakdown;
+
+  return (
+    <Card className="col-span-1">
+      <ChartHeader
+        title={"Seat information"}
+        description={"Overview of GitHub Copilot seats"}
+      />
+      <CardContent className=" flex flex-col gap-2">
+        <Item label="Total" value={total} />
+        <Item label="Active" value={active_this_cycle} />
+        <Item label="Inactive" value={inactive_this_cycle} />
+      </CardContent>
+    </Card>
   );
 };
 

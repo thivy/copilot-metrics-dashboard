@@ -7,7 +7,7 @@ interface ChartHeaderProps {
 
 export const ChartHeader = (props: ChartHeaderProps) => {
   return (
-    <CardHeader className="border-b mb-6 space-y-2">
+    <CardHeader className="border-b mb-3 pb-3">
       <CardTitle>{props.title}</CardTitle>
       <CardDescription className="text-xs">{props.description}</CardDescription>
     </CardHeader>

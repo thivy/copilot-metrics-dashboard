@@ -1,6 +1,7 @@
 import { AppHeader } from "@/features/app-header/app-header";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Dev Exp",
   description: "Dev Exp",

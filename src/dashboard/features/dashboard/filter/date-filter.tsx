@@ -3,6 +3,7 @@
 import { CalendarIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
 import * as React from "react";
+import { DateRange } from "react-day-picker";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -20,10 +21,7 @@ export const DateFilter = () => {
   const lastThirtyOneDays = new Date(today);
   lastThirtyOneDays.setDate(today.getDate() - 31);
 
-  const [date, setDate] = React.useState<{
-    from: Date;
-    to: Date;
-  }>({
+  const [date, setDate] = React.useState<DateRange>({
     from: lastThirtyOneDays,
     to: today,
   });
@@ -33,15 +31,17 @@ export const DateFilter = () => {
   const router = useRouter();
 
   const applyFilters = () => {
-    const formatEndDate = format(date.to, "yyyy-MM-dd");
-    const formatStartDate = format(date.from, "yyyy-MM-dd");
+    if (date.from && date.to) {
+      const formatEndDate = format(date?.to, "yyyy-MM-dd");
+      const formatStartDate = format(date?.from, "yyyy-MM-dd");
 
-    router.push(
-      `/dashboard?startDate=${formatStartDate}&endDate=${formatEndDate}`,
-      { scroll: false }
-    );
-    router.refresh();
-    setIsOpen(false);
+      router.push(
+        `/dashboard?startDate=${formatStartDate}&endDate=${formatEndDate}`,
+        { scroll: false }
+      );
+      router.refresh();
+      setIsOpen(false);
+    }
   };
 
   return (
@@ -80,7 +80,11 @@ export const DateFilter = () => {
             mode="range"
             defaultMonth={date?.from}
             selected={date}
-            onSelect={setDate}
+            onSelect={(range) => {
+              if (range) {
+                setDate(range);
+              }
+            }}
             numberOfMonths={2}
           />
           <Button onClick={applyFilters} className="self-end m-2">

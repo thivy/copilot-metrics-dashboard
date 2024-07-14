@@ -15,7 +15,7 @@ import {
 } from "./services/copilot-metrics-service";
 import { getCopilotSeatsForOrgs } from "./services/copilot-seat-service";
 
-interface IProps {
+export interface IProps {
   searchParams: IFilter;
 }
 

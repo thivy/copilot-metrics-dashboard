@@ -2,12 +2,13 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { useDashboard } from "../dashboard-state";
 import { CopilotUsageOutput } from "../services/copilot-metrics-service";
+import { computeAcceptanceAverage } from "./acceptance-rate";
 import { ChartHeader } from "./chart-header";
 import StatsCard from "./stats-card";
 
 export const Stats = () => {
   const { seatManagement, filteredData } = useDashboard();
-  const acceptanceAverage = computeAcceptanceAverage(filteredData);
+  const acceptanceAverage = computeCumulativeAcceptanceAverage(filteredData);
   const averageActiveUsers = computeActiveUserAverage(filteredData);
   const adoptionRate = computeAdoptionRate(seatManagement);
 
@@ -60,7 +61,9 @@ export const Overview = () => {
   );
 };
 
-const computeActiveUserAverage = (filteredData: CopilotUsageOutput[]) => {
+export const computeActiveUserAverage = (
+  filteredData: CopilotUsageOutput[]
+) => {
   const activeUsersSum: number = filteredData.reduce(
     (sum: number, item: { total_active_users: number }) =>
       sum + item.total_active_users,
@@ -71,7 +74,7 @@ const computeActiveUserAverage = (filteredData: CopilotUsageOutput[]) => {
   return averageActiveUsers;
 };
 
-const computeAdoptionRate = (seatManagement: any) => {
+export const computeAdoptionRate = (seatManagement: any) => {
   const adoptionRate =
     (seatManagement.seat_breakdown.active_this_cycle /
       seatManagement.seat_breakdown.total) *
@@ -79,27 +82,13 @@ const computeAdoptionRate = (seatManagement: any) => {
   return adoptionRate;
 };
 
-const computeAcceptanceAverage = (filteredData: CopilotUsageOutput[]) => {
-  const acceptanceAverages = filteredData.map((item) => {
-    let cumulatedLinesAccepted = 0;
-    let cumulatedLinesSuggested = 0;
-
-    item.breakdown.forEach((breakdown) => {
-      const { lines_accepted, lines_suggested } = breakdown;
-      cumulatedLinesAccepted += lines_accepted;
-      cumulatedLinesSuggested += lines_suggested;
-    });
-
-    const acceptanceAverage =
-      cumulatedLinesSuggested !== 0
-        ? (cumulatedLinesAccepted / cumulatedLinesSuggested) * 100
-        : 0;
-
-    return acceptanceAverage;
-  });
+export const computeCumulativeAcceptanceAverage = (
+  filteredData: CopilotUsageOutput[]
+) => {
+  const acceptanceAverages = computeAcceptanceAverage(filteredData);
 
   const totalAcceptanceRate = acceptanceAverages.reduce(
-    (sum, rate) => sum + rate,
+    (sum, rate) => sum + rate.acceptanceRate,
     0
   );
 

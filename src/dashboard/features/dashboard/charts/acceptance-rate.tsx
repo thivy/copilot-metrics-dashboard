@@ -3,7 +3,6 @@ import { Card, CardContent } from "@/components/ui/card";
 
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { useDashboard } from "../dashboard-state";
-import { Trend } from "../services/copilot-metrics-service";
 
 import {
   ChartConfig,
@@ -47,7 +46,7 @@ export const AcceptanceRate = () => {
               minTickGap={32}
             />
             <YAxis
-              dataKey={config.completionAcceptanceRate}
+              dataKey={config.acceptanceRate}
               tickLine={false}
               axisLine={false}
               tickMargin={8}
@@ -56,7 +55,7 @@ export const AcceptanceRate = () => {
             />
             <ChartTooltip cursor={true} content={<ChartTooltipContent />} />
             <Area
-              dataKey={config.completionAcceptanceRate}
+              dataKey={config.acceptanceRate}
               type="linear"
               fill="hsl(var(--chart-1))"
               fillOpacity={0.4}
@@ -71,11 +70,11 @@ export const AcceptanceRate = () => {
 };
 
 const chartConfig = () => {
-  const completionAcceptanceRate: DataKey = "completionAcceptanceRate";
+  const acceptanceRate: DataKey = "acceptanceRate";
   const timeFrameDisplay: DataKey = "timeFrameDisplay";
 
   const config = {
-    completionAcceptanceRate: {
+    acceptanceRate: {
       label: "Acceptance rate (%) ",
     },
   } satisfies ChartConfig;
@@ -83,66 +82,31 @@ const chartConfig = () => {
   return {
     config,
     timeFrameDisplay,
-    completionAcceptanceRate,
+    acceptanceRate,
   };
 };
 
 interface Data {
-  // day: string;
-  completionAcceptanceRate: number;
+  acceptanceRate: number;
   timeFrameDisplay: string;
 }
 
 type DataKey = keyof Data;
 
 function useData(): Data[] {
-  const { filteredData: data } = useDashboard();
+  const { filteredData } = useDashboard();
 
-  const rates = data.map((item) => {
+  const rates = filteredData.map((item) => {
     const rate =
       item.total_lines_suggested !== 0
         ? (item.total_lines_accepted / item.total_lines_suggested) * 100
         : 0;
 
     return {
-      completionAcceptanceRate: parseFloat(rate.toFixed(2)),
+      acceptanceRate: parseFloat(rate.toFixed(2)),
       timeFrameDisplay: item.time_frame_display,
     };
   });
 
   return rates;
 }
-
-export const useCompletionAverage = () => {
-  const { filteredData } = useDashboard();
-  let sum = 0;
-  let trend: Trend = "up";
-  let lastValue = 0;
-
-  const rates = filteredData.map((item) => {
-    let total_lines_accepted = 0;
-    let total_lines_suggested = 0;
-
-    item.breakdown.forEach((breakdown) => {
-      const { lines_accepted, lines_suggested } = breakdown;
-      total_lines_accepted += lines_accepted;
-      total_lines_suggested += lines_suggested;
-    });
-
-    const completionAcceptanceRate =
-      total_lines_suggested !== 0
-        ? (total_lines_accepted / total_lines_suggested) * 100
-        : 0;
-
-    trend = completionAcceptanceRate < lastValue ? "down" : "up";
-
-    sum += completionAcceptanceRate;
-
-    lastValue = completionAcceptanceRate;
-    return {
-      completionAcceptanceRate,
-    };
-  });
-
-  return { average: sum / rates.length, trend };
-};

@@ -1,14 +1,12 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
 import { useDashboard } from "../dashboard-state";
-import { Trend } from "../services/copilot-metrics-service";
-import { useCompletionAverage } from "./acceptance-rate";
 import { ChartHeader } from "./chart-header";
 import StatsCard from "./stats-card";
 
 export const Stats = () => {
-  const data = useCompletionAverage();
-  const { averageActiveUsers, activeUsersTrend } = useDailyAverageUsers();
+  const data = useAcceptanceAverage();
+  const { averageActiveUsers } = useDailyAverageUsers();
 
   const { seatManagement } = useDashboard();
 
@@ -23,13 +21,11 @@ export const Stats = () => {
         title="Acceptance average"
         description="Inline code acceptance average"
         value={data.average.toFixed(2) + "%"}
-        trend={data.trend}
       ></StatsCard>
       <StatsCard
         title="Active users"
         description="Average active users"
         value={averageActiveUsers.toFixed(0) + ""}
-        trend={activeUsersTrend}
       ></StatsCard>
       <StatsCard
         title="Adoption rate"
@@ -77,24 +73,37 @@ const useDailyAverageUsers = () => {
   let lastActiveUsers = 0;
   let lastChatUsers = 0;
 
-  let activeUsersTrend: Trend = "up";
-  let activeChatUsersTrend: Trend = "up";
-
   filteredData.forEach((item) => {
     activeUsersSum += item.total_active_users;
     chatSum += item.total_active_chat_users;
-
-    activeUsersTrend =
-      item.total_active_users < lastActiveUsers ? "down" : "up";
-    activeChatUsersTrend =
-      item.total_active_chat_users < lastChatUsers ? "down" : "up";
 
     lastActiveUsers = item.total_active_users;
     lastChatUsers = item.total_active_chat_users;
   });
 
   return {
-    activeUsersTrend,
     averageActiveUsers: activeUsersSum / filteredData.length,
   };
+};
+
+export const useAcceptanceAverage = () => {
+  const { filteredData } = useDashboard();
+
+  let total_lines_accepted = 0;
+  let total_lines_suggested = 0;
+
+  filteredData.forEach((item) => {
+    item.breakdown.forEach((breakdown) => {
+      const { lines_accepted, lines_suggested } = breakdown;
+      total_lines_accepted += lines_accepted;
+      total_lines_suggested += lines_suggested;
+    });
+  });
+
+  const average =
+    total_lines_suggested !== 0
+      ? (total_lines_accepted / total_lines_suggested) * 100
+      : 0;
+
+  return { average };
 };

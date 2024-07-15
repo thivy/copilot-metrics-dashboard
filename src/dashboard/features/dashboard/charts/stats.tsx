@@ -8,12 +8,7 @@ import StatsCard from "./stats-card";
 
 export const Stats = () => {
   const data = useCompletionAverage();
-  const {
-    total_active_users,
-    total_active_chat_users,
-    activeUsersTrend,
-    activeChatUsersTrend,
-  } = useDailyAverageUsers();
+  const { averageActiveUsers, activeUsersTrend } = useDailyAverageUsers();
 
   const { seatManagement } = useDashboard();
 
@@ -33,7 +28,7 @@ export const Stats = () => {
       <StatsCard
         title="Active users"
         description="Average active users"
-        value={total_active_users.toFixed(0) + ""}
+        value={averageActiveUsers.toFixed(0) + ""}
         trend={activeUsersTrend}
       ></StatsCard>
       <StatsCard
@@ -75,8 +70,8 @@ export const Overview = () => {
 
 // daily average active users
 const useDailyAverageUsers = () => {
-  const { filteredData: data } = useDashboard();
-  let sum = 0;
+  const { filteredData } = useDashboard();
+  let activeUsersSum = 0;
   let chatSum = 0;
 
   let lastActiveUsers = 0;
@@ -85,8 +80,8 @@ const useDailyAverageUsers = () => {
   let activeUsersTrend: Trend = "up";
   let activeChatUsersTrend: Trend = "up";
 
-  const rates = data.map((item) => {
-    sum += item.total_active_users;
+  filteredData.forEach((item) => {
+    activeUsersSum += item.total_active_users;
     chatSum += item.total_active_chat_users;
 
     activeUsersTrend =
@@ -96,17 +91,10 @@ const useDailyAverageUsers = () => {
 
     lastActiveUsers = item.total_active_users;
     lastChatUsers = item.total_active_chat_users;
-
-    return {
-      total_active_users: item.total_active_users,
-      total_active_chat_users: item.total_active_chat_users,
-    };
   });
 
   return {
     activeUsersTrend,
-    activeChatUsersTrend,
-    total_active_users: sum / rates.length,
-    total_active_chat_users: chatSum / rates.length,
+    averageActiveUsers: activeUsersSum / filteredData.length,
   };
 };

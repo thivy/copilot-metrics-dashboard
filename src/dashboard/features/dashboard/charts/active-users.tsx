@@ -99,15 +99,15 @@ interface Data {
 type DataKey = keyof Data;
 
 export function useData(): Data[] {
-  const { filteredData: data } = useDashboard();
+  const { filteredData } = useDashboard();
 
-  const rates = data.map((item) => {
+  const rates = filteredData.map((item) => {
     let totalUsers = item.total_active_users;
     let totalChatUsers = item.total_active_chat_users;
 
     return {
-      totalUsers,
-      totalChatUsers,
+      totalUsers: totalUsers,
+      totalChatUsers: totalChatUsers,
       timeFrameDisplay: item.time_frame_display,
     };
   });

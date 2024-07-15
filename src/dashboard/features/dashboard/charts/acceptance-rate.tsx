@@ -114,12 +114,12 @@ function useData(): Data[] {
 }
 
 export const useCompletionAverage = () => {
-  const { filteredData: data } = useDashboard();
+  const { filteredData } = useDashboard();
   let sum = 0;
   let trend: Trend = "up";
   let lastValue = 0;
 
-  const rates = data.map((item) => {
+  const rates = filteredData.map((item) => {
     let total_lines_accepted = 0;
     let total_lines_suggested = 0;
 

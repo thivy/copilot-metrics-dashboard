@@ -58,6 +58,15 @@ export const groupByTimeFrame = (
       });
     });
 
+    const average = (value: number) => Math.ceil(value / timeFrameLength);
+
+    aggregatedData.total_active_users = average(
+      aggregatedData.total_active_users
+    );
+    aggregatedData.total_active_chat_users = average(
+      aggregatedData.total_active_chat_users
+    );
+
     updatedResponse.push(aggregatedData);
   });
 

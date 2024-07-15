@@ -1,26 +1,22 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
 import { useDashboard } from "../dashboard-state";
+import { CopilotUsageOutput } from "../services/copilot-metrics-service";
 import { ChartHeader } from "./chart-header";
 import StatsCard from "./stats-card";
 
 export const Stats = () => {
-  const data = useAcceptanceAverage();
-  const { averageActiveUsers } = useDailyAverageUsers();
-
-  const { seatManagement } = useDashboard();
-
-  const adoptionRate =
-    (seatManagement.seat_breakdown.active_this_cycle /
-      seatManagement.seat_breakdown.total) *
-    100;
+  const { seatManagement, filteredData } = useDashboard();
+  const acceptanceAverage = computeAcceptanceAverage(filteredData);
+  const averageActiveUsers = computeActiveUserAverage(filteredData);
+  const adoptionRate = computeAdoptionRate(seatManagement);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 col-span-4">
       <StatsCard
         title="Acceptance average"
         description="Inline code acceptance average"
-        value={data.average.toFixed(2) + "%"}
+        value={acceptanceAverage.toFixed(2) + "%"}
       ></StatsCard>
       <StatsCard
         title="Active users"
@@ -64,46 +60,48 @@ export const Overview = () => {
   );
 };
 
-// daily average active users
-const useDailyAverageUsers = () => {
-  const { filteredData } = useDashboard();
-  let activeUsersSum = 0;
-  let chatSum = 0;
+const computeActiveUserAverage = (filteredData: CopilotUsageOutput[]) => {
+  const activeUsersSum: number = filteredData.reduce(
+    (sum: number, item: { total_active_users: number }) =>
+      sum + item.total_active_users,
+    0
+  );
 
-  let lastActiveUsers = 0;
-  let lastChatUsers = 0;
-
-  filteredData.forEach((item) => {
-    activeUsersSum += item.total_active_users;
-    chatSum += item.total_active_chat_users;
-
-    lastActiveUsers = item.total_active_users;
-    lastChatUsers = item.total_active_chat_users;
-  });
-
-  return {
-    averageActiveUsers: activeUsersSum / filteredData.length,
-  };
+  const averageActiveUsers = activeUsersSum / filteredData.length;
+  return averageActiveUsers;
 };
 
-export const useAcceptanceAverage = () => {
-  const { filteredData } = useDashboard();
+const computeAdoptionRate = (seatManagement: any) => {
+  const adoptionRate =
+    (seatManagement.seat_breakdown.active_this_cycle /
+      seatManagement.seat_breakdown.total) *
+    100;
+  return adoptionRate;
+};
 
-  let total_lines_accepted = 0;
-  let total_lines_suggested = 0;
+const computeAcceptanceAverage = (filteredData: CopilotUsageOutput[]) => {
+  const acceptanceAverages = filteredData.map((item) => {
+    let cumulatedLinesAccepted = 0;
+    let cumulatedLinesSuggested = 0;
 
-  filteredData.forEach((item) => {
     item.breakdown.forEach((breakdown) => {
       const { lines_accepted, lines_suggested } = breakdown;
-      total_lines_accepted += lines_accepted;
-      total_lines_suggested += lines_suggested;
+      cumulatedLinesAccepted += lines_accepted;
+      cumulatedLinesSuggested += lines_suggested;
     });
+
+    const acceptanceAverage =
+      cumulatedLinesSuggested !== 0
+        ? (cumulatedLinesAccepted / cumulatedLinesSuggested) * 100
+        : 0;
+
+    return acceptanceAverage;
   });
 
-  const average =
-    total_lines_suggested !== 0
-      ? (total_lines_accepted / total_lines_suggested) * 100
-      : 0;
+  const totalAcceptanceRate = acceptanceAverages.reduce(
+    (sum, rate) => sum + rate,
+    0
+  );
 
-  return { average };
+  return totalAcceptanceRate / acceptanceAverages.length;
 };

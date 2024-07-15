@@ -15,7 +15,7 @@ import {
 import { ChartHeader } from "./chart-header";
 
 export const AcceptanceRate = () => {
-  const data = useData();
+  const data = useAcceptanceAverage();
   const config = chartConfig();
 
   return (
@@ -93,13 +93,22 @@ interface Data {
 
 type DataKey = keyof Data;
 
-function useData(): Data[] {
+function useAcceptanceAverage(): Data[] {
   const { filteredData } = useDashboard();
 
   const rates = filteredData.map((item) => {
+    let total_lines_accepted = 0;
+    let total_lines_suggested = 0;
+
+    item.breakdown.forEach((breakdown) => {
+      const { lines_accepted, lines_suggested } = breakdown;
+      total_lines_accepted += lines_accepted;
+      total_lines_suggested += lines_suggested;
+    });
+
     const rate =
-      item.total_lines_suggested !== 0
-        ? (item.total_lines_accepted / item.total_lines_suggested) * 100
+      total_lines_suggested !== 0
+        ? (total_lines_accepted / total_lines_suggested) * 100
         : 0;
 
     return {

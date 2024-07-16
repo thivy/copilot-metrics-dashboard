@@ -2,7 +2,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useDashboard } from "../dashboard-state";
 
 import {
   ChartConfig,
@@ -11,20 +10,9 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { Pie, PieChart } from "recharts";
+import { useDashboard } from "../dashboard-state";
+import { CopilotUsageOutput } from "../services/copilot-metrics-service";
 import { ChartHeader } from "./chart-header";
-export const Language = () => {
-  return (
-    <Card className="col-span-4 md:col-span-2">
-      <ChartHeader
-        title="Language"
-        description="Percentage of active users per language"
-      />
-      <CardContent>
-        <LanguageChart />
-      </CardContent>
-    </Card>
-  );
-};
 
 export interface PieChartData {
   id: string;
@@ -33,44 +21,52 @@ export interface PieChartData {
   fill: string;
 }
 
-const chartConfig = {} satisfies ChartConfig;
-
-export const LanguageChart = () => {
-  const data = useData();
+export const Language = () => {
+  const { filteredData } = useDashboard();
+  const data = computeLanguageData(filteredData);
 
   return (
-    <div className="w-full h-full flex flex-col gap-4 ">
-      <div className="">
-        <ChartContainer
-          config={chartConfig}
-          className="mx-auto aspect-square max-h-[250px]"
-        >
-          <PieChart>
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
-            <Pie
-              paddingAngle={1}
-              data={data}
-              dataKey="value"
-              nameKey="name"
-              cornerRadius={5}
-              innerRadius={40}
-            />
-          </PieChart>
-        </ChartContainer>
-      </div>
-      <div className="flex flex-col gap-4 text-sm flex-wrap">
-        <ListItems items={data} />
-      </div>
-    </div>
+    <Card className="col-span-4 md:col-span-2">
+      <ChartHeader
+        title="Language"
+        description="Percentage of active users per language"
+      />
+      <CardContent>
+        <div className="w-full h-full flex flex-col gap-4 ">
+          <div className="">
+            <ChartContainer
+              config={chartConfig}
+              className="mx-auto aspect-square max-h-[250px]"
+            >
+              <PieChart>
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent hideLabel />}
+                />
+                <Pie
+                  paddingAngle={1}
+                  data={data}
+                  dataKey="value"
+                  nameKey="name"
+                  cornerRadius={5}
+                  innerRadius={40}
+                />
+              </PieChart>
+            </ChartContainer>
+          </div>
+          <div className="flex flex-col gap-4 text-sm flex-wrap">
+            <ListItems items={data} />
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
+const chartConfig = {} satisfies ChartConfig;
+
 export function ListItems(props: { items: PieChartData[] }) {
   const { items } = props;
-  const totalSum = items.reduce((acc, item) => acc + item.value, 0);
 
   return (
     <ScrollArea className="h-72 rounded-md">
@@ -82,7 +78,7 @@ export function ListItems(props: { items: PieChartData[] }) {
           >
             <span className="flex-1">{item.name}</span>
             <span className="p-1 px-2 border bg-primary-foreground rounded-full text-xs">
-              {((item.value / totalSum) * 100).toFixed(2)} %{" "}
+              {item.value} %
             </span>
           </div>
         ))}
@@ -91,35 +87,44 @@ export function ListItems(props: { items: PieChartData[] }) {
   );
 }
 
-function useData() {
-  const { filteredData: data } = useDashboard();
-  const languages: Array<PieChartData> = [];
+export const computeLanguageData = (
+  filteredData: CopilotUsageOutput[]
+): Array<PieChartData> => {
+  const languageMap = new Map<string, PieChartData>();
 
-  data.forEach((item) => {
-    item.breakdown.forEach((breakdown) => {
-      const { language } = breakdown;
-      const languageToEdit = languages.find((e) => e.id === language);
-
-      if (languageToEdit) {
-        languageToEdit.value += breakdown.active_users;
-        return;
-      }
-      languages.push({
+  // Aggregate data
+  filteredData.forEach(({ breakdown }) => {
+    breakdown.forEach(({ language, active_users }) => {
+      const languageData = languageMap.get(language) || {
         id: language,
         name: language,
-        value: breakdown.active_users,
-        fill: ``,
-      });
+        value: 0,
+        fill: "",
+      };
+      languageData.value += active_users;
+      languageMap.set(language, languageData);
     });
   });
 
-  // sort by value
+  // Convert Map to Array and calculate percentages
+  let totalSum = 0;
+  const languages = Array.from(languageMap.values()).map((language) => {
+    totalSum += language.value;
+    return language;
+  });
+
+  // Calculate percentage values
+  languages.forEach((language) => {
+    language.value = Number(((language.value / totalSum) * 100).toFixed(2));
+  });
+
+  // Sort by value
   languages.sort((a, b) => b.value - a.value);
 
+  // Assign colors
   languages.forEach((language, index) => {
-    language.fill =
-      index < 4 ? `hsl(var(--chart-${index + 1}))` : `hsl(var(--chart-${5}))`;
+    language.fill = `hsl(var(--chart-${index < 4 ? index + 1 : 5}))`;
   });
 
   return languages;
-}
+};

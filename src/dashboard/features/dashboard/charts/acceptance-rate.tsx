@@ -5,7 +5,6 @@ import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { useDashboard } from "../dashboard-state";
 
 import {
-  ChartConfig,
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
@@ -18,7 +17,6 @@ import { ChartHeader } from "./chart-header";
 export const AcceptanceRate = () => {
   const { filteredData } = useDashboard();
   const data = computeAcceptanceAverage(filteredData);
-  const config = chartConfig();
 
   return (
     <Card className="col-span-4">
@@ -29,26 +27,18 @@ export const AcceptanceRate = () => {
       />
 
       <CardContent>
-        <ChartContainer config={config.config} className="h-80 w-full">
-          <AreaChart
-            accessibilityLayer
-            data={data}
-            margin={{
-              left: -20,
-              right: 0,
-              bottom: 0,
-            }}
-          >
+        <ChartContainer config={chartConfig} className="h-80 w-full">
+          <AreaChart accessibilityLayer data={data}>
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey={config.timeFrameDisplay}
+              dataKey={chartConfig.timeFrameDisplay.key}
               tickLine={false}
               axisLine={false}
               tickMargin={8}
               minTickGap={32}
             />
             <YAxis
-              dataKey={config.acceptanceRate}
+              dataKey={chartConfig.acceptanceRate.key}
               tickLine={false}
               axisLine={false}
               tickMargin={8}
@@ -57,7 +47,7 @@ export const AcceptanceRate = () => {
             />
             <ChartTooltip cursor={true} content={<ChartTooltipContent />} />
             <Area
-              dataKey={config.acceptanceRate}
+              dataKey={chartConfig.acceptanceRate.key}
               type="linear"
               fill="hsl(var(--chart-1))"
               fillOpacity={0.4}
@@ -71,21 +61,22 @@ export const AcceptanceRate = () => {
   );
 };
 
-const chartConfig = () => {
-  const acceptanceRate: DataKey = "acceptanceRate";
-  const timeFrameDisplay: DataKey = "timeFrameDisplay";
+const chartConfig: Record<
+  DataKey,
+  {
+    label: string;
+    key: DataKey;
+  }
+> = {
+  ["acceptanceRate"]: {
+    label: "Acceptance rate (%) ",
+    key: "acceptanceRate",
+  },
 
-  const config = {
-    acceptanceRate: {
-      label: "Acceptance rate (%) ",
-    },
-  } satisfies ChartConfig;
-
-  return {
-    config,
-    timeFrameDisplay,
-    acceptanceRate,
-  };
+  ["timeFrameDisplay"]: {
+    label: "Time frame display",
+    key: "timeFrameDisplay",
+  },
 };
 
 interface Data {

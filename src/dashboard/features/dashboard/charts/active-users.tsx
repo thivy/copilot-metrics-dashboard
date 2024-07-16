@@ -5,18 +5,18 @@ import { useDashboard } from "../dashboard-state";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import {
-  ChartConfig,
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { CopilotUsageOutput } from "../services/copilot-metrics-service";
 import { ChartHeader } from "./chart-header";
 
 export const ActiveUsers = () => {
-  const data = useData();
-  const config = chartConfig();
+  const { filteredData } = useDashboard();
+  const data = getActiveUsers(filteredData);
 
   return (
     <Card className="col-span-4">
@@ -25,16 +25,8 @@ export const ActiveUsers = () => {
         description="The total number active users per day using the chat and inline suggestions."
       />
       <CardContent>
-        <ChartContainer config={config.config} className="w-full h-80">
-          <BarChart
-            accessibilityLayer
-            data={data}
-            margin={{
-              left: 0,
-              right: 0,
-              bottom: 0,
-            }}
-          >
+        <ChartContainer config={chartConfig} className="w-full h-80">
+          <BarChart accessibilityLayer data={data}>
             <CartesianGrid vertical={false} />
             <YAxis
               tickLine={false}
@@ -43,7 +35,7 @@ export const ActiveUsers = () => {
               allowDataOverflow
             />
             <XAxis
-              dataKey={config.timeFrameDisplay}
+              dataKey={chartConfig.timeFrameDisplay.key}
               tickLine={false}
               axisLine={false}
               tickMargin={8}
@@ -51,12 +43,12 @@ export const ActiveUsers = () => {
             />
             <ChartTooltip cursor={true} content={<ChartTooltipContent />} />
             <Bar
-              dataKey={config.totalUsers}
+              dataKey={chartConfig.totalUsers.key}
               fill="hsl(var(--chart-2))"
               radius={4}
             />{" "}
             <Bar
-              dataKey={config.totalChatUsers}
+              dataKey={chartConfig.totalChatUsers.key}
               fill="hsl(var(--chart-1))"
               radius={4}
             />
@@ -68,26 +60,25 @@ export const ActiveUsers = () => {
   );
 };
 
-const chartConfig = () => {
-  const totalUsers: DataKey = "totalUsers";
-  const totalChatUsers: DataKey = "totalChatUsers";
-  const timeFrameDisplay: DataKey = "timeFrameDisplay";
-
-  const config = {
-    [totalUsers]: {
-      label: "Total users",
-    },
-    [totalChatUsers]: {
-      label: "Total chat users",
-    },
-  } satisfies ChartConfig;
-
-  return {
-    config,
-    timeFrameDisplay,
-    totalUsers,
-    totalChatUsers,
-  };
+const chartConfig: Record<
+  DataKey,
+  {
+    label: string;
+    key: DataKey;
+  }
+> = {
+  ["totalUsers"]: {
+    label: "Total users",
+    key: "totalUsers",
+  },
+  ["totalChatUsers"]: {
+    label: "Total chat users",
+    key: "totalChatUsers",
+  },
+  ["timeFrameDisplay"]: {
+    label: "Time frame display",
+    key: "timeFrameDisplay",
+  },
 };
 
 interface Data {
@@ -98,16 +89,11 @@ interface Data {
 
 type DataKey = keyof Data;
 
-export function useData(): Data[] {
-  const { filteredData } = useDashboard();
-
+export function getActiveUsers(filteredData: CopilotUsageOutput[]): Data[] {
   const rates = filteredData.map((item) => {
-    let totalUsers = item.total_active_users;
-    let totalChatUsers = item.total_active_chat_users;
-
     return {
-      totalUsers: totalUsers,
-      totalChatUsers: totalChatUsers,
+      totalUsers: item.total_active_users,
+      totalChatUsers: item.total_active_chat_users,
       timeFrameDisplay: item.time_frame_display,
     };
   });

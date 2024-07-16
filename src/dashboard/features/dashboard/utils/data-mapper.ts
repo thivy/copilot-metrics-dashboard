@@ -63,6 +63,7 @@ export const groupByTimeFrame = (
     aggregatedData.total_active_users = average(
       aggregatedData.total_active_users
     );
+
     aggregatedData.total_active_chat_users = average(
       aggregatedData.total_active_chat_users
     );

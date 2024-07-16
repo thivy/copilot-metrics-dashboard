@@ -1,22 +1,22 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
-import { useDashboard } from "../dashboard-state";
 
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import {
-  ChartConfig,
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { useDashboard } from "../dashboard-state";
+import { CopilotUsageOutput } from "../services/copilot-metrics-service";
 import { ChartHeader } from "./chart-header";
 
 export const TotalSuggestionsAndAcceptances = () => {
-  const data = useData();
-  const config = chartConfig();
+  const { filteredData } = useDashboard();
+  const data = totalSuggestionsAndAcceptances(filteredData);
   return (
     <Card className="col-span-4">
       <ChartHeader
@@ -24,7 +24,7 @@ export const TotalSuggestionsAndAcceptances = () => {
         description="The total number of Copilot code completion suggestions shown to users vs the total number of Copilot code completion suggestions accepted by users."
       />
       <CardContent>
-        <ChartContainer config={config.config} className="w-full h-80">
+        <ChartContainer config={chartConfig} className="w-full h-80">
           <AreaChart accessibilityLayer data={data}>
             <CartesianGrid vertical={false} />
             <YAxis
@@ -34,7 +34,7 @@ export const TotalSuggestionsAndAcceptances = () => {
               allowDataOverflow
             />
             <XAxis
-              dataKey={config.timeFrameDisplay}
+              dataKey={chartConfig.timeFrameDisplay.key}
               tickLine={false}
               axisLine={false}
               tickMargin={8}
@@ -42,13 +42,13 @@ export const TotalSuggestionsAndAcceptances = () => {
             />
             <ChartTooltip cursor={true} content={<ChartTooltipContent />} />
             <Area
-              dataKey={config.totalSuggestionsCount}
+              dataKey={chartConfig.totalSuggestionsCount.key}
               type="linear"
               fill="hsl(var(--chart-2))"
               stroke="hsl(var(--chart-2))"
             />
             <Area
-              dataKey={config.totalAcceptancesCount}
+              dataKey={chartConfig.totalAcceptancesCount.key}
               type="linear"
               fill="hsl(var(--chart-1))"
               stroke="hsl(var(--chart-1))"
@@ -62,26 +62,25 @@ export const TotalSuggestionsAndAcceptances = () => {
   );
 };
 
-const chartConfig = () => {
-  const totalAcceptancesCount: DataKey = "totalAcceptancesCount";
-  const totalSuggestionsCount: DataKey = "totalSuggestionsCount";
-  const timeFrameDisplay: DataKey = "timeFrameDisplay";
-
-  const config = {
-    [totalAcceptancesCount]: {
-      label: "Total acceptances",
-    },
-    [totalSuggestionsCount]: {
-      label: "Total suggestions",
-    },
-  } satisfies ChartConfig;
-
-  return {
-    config,
-    timeFrameDisplay,
-    totalAcceptancesCount,
-    totalSuggestionsCount,
-  };
+const chartConfig: Record<
+  DataKey,
+  {
+    label: string;
+    key: DataKey;
+  }
+> = {
+  ["totalAcceptancesCount"]: {
+    label: "Total acceptances",
+    key: "totalAcceptancesCount",
+  },
+  ["totalSuggestionsCount"]: {
+    label: "Total suggestions",
+    key: "totalSuggestionsCount",
+  },
+  ["timeFrameDisplay"]: {
+    label: "Time frame display",
+    key: "timeFrameDisplay",
+  },
 };
 
 interface Data {
@@ -92,9 +91,10 @@ interface Data {
 
 type DataKey = keyof Data;
 
-export function useData(): Data[] {
-  const { filteredData: data } = useDashboard();
-  const rates = data.map((item) => {
+export function totalSuggestionsAndAcceptances(
+  filteredData: CopilotUsageOutput[]
+): Data[] {
+  const rates = filteredData.map((item) => {
     let totalAcceptancesCount = 0;
     let totalSuggestionsCount = 0;
 

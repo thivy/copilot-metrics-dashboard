@@ -3,7 +3,7 @@
 import { useTheme } from "next-themes";
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Moon, Sun } from "lucide-react";
+import { LaptopMinimal, Moon, Sun } from "lucide-react";
 import { useState } from "react";
 
 export function ThemeToggle() {
@@ -35,7 +35,7 @@ export function ThemeToggle() {
           value="system"
           onClick={() => setTheme("system")}
         >
-          <Moon size={18} />
+          <LaptopMinimal size={18} />
         </TabsTrigger>
       </TabsList>
     </Tabs>

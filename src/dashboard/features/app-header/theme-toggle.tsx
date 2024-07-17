@@ -10,7 +10,7 @@ export function ThemeToggle() {
   const { setTheme, theme } = useTheme();
   const [currentTheme, setCurrentTheme] = useState<string | undefined>(theme);
 
-  if (theme === undefined || theme.length === 0) {
+  if (theme === undefined || theme.length === 0 || currentTheme === undefined) {
     setCurrentTheme("system");
   }
   return (

@@ -4,31 +4,29 @@ param resourceToken string
 param location string = resourceGroup().location
 
 @secure()
-param nextAuthHash string = uniqueString(newGuid())
-
-@secure()
 param githubToken string
 
-param useTestData bool
+param githubEnterpriseName string
 
-param githubAccountType string
+param githubOrganisationName string
 
-param githubAccountName string
+param githubAPIVersion string 
 
 param tags object = {}
 
-var cosmos_name = toLower('${name}-cosmos-${resourceToken}')
-var webapp_name = toLower('${name}-webapp-${resourceToken}')
-var stg_name = toLower('${name}stg${resourceToken}')
-var functionapp_name = toLower('${name}-fcnapp-${resourceToken}')
-var appservice_name = toLower('${name}-app-${resourceToken}')
+var shortName = toLower(replace(name, '-', ''))
+
+var cosmosName = toLower('${name}-metrics-${resourceToken}')
+var webappName = toLower('${name}-dashboard-${resourceToken}')
+var storageName =  toLower(replace(shortName, '-', ''))
+var functionAppName = toLower('${name}-ingest-${resourceToken}')
+var appserviceName = toLower('${name}-dashboard-${resourceToken}')
 
 // keyvault name must be less than 24 chars - token is 13
-var kv_prefix = take(name, 7)
-var keyVaultName = toLower('${kv_prefix}-kv-${resourceToken}')
-var la_workspace_name = toLower('${name}-la-${resourceToken}')
-var appinsights_name = toLower('${name}-appi-${resourceToken}')
-var diagnostic_setting_name = 'AppServiceConsoleLogs'
+var keyVaultName = toLower('${shortName}-kv-${resourceToken}')
+var logWorkspaceName = toLower('${name}-la-${resourceToken}')
+var appinsightsName = toLower('${name}-appi-${resourceToken}')
+var diagnosticSettingName = 'AppServiceConsoleLogs'
 
 var keyVaultSecretsOfficerRole = subscriptionResourceId(
   'Microsoft.Authorization/roleDefinitions',
@@ -43,7 +41,7 @@ var databaseName = 'platform-engineering'
 var orgContainerName = 'history'
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2020-06-01' = {
-  name: appservice_name
+  name: appserviceName
   location: location
   tags: tags
   properties: {
@@ -60,7 +58,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2020-06-01' = {
 }
 
 resource copilotDataFunction 'Microsoft.Web/sites@2023-12-01' = {
-  name: functionapp_name
+  name: functionAppName
   tags: union(tags, { 'azd-service-name': 'ingestion' })
   kind: 'functionapp'
   identity: { type: 'SystemAssigned' }
@@ -96,16 +94,16 @@ resource copilotDataFunction 'Microsoft.Web/sites@2023-12-01' = {
           value: '@Microsoft.KeyVault(VaultName=${kv.name};SecretName=${kv::GITHUB_TOKEN.name})'
         }
         {
-          name: 'USE_TEST_DATA'
-          value: string(useTestData)
+          name: 'GITHUB_ENTERPRISE'
+          value: githubEnterpriseName
         }
         {
-          name: 'GITHUB_TYPE'
-          value: githubAccountType
+          name: 'GITHUB_ORGANIZATION'
+          value: githubOrganisationName
         }
         {
-          name: 'GITHUB_NAME'
-          value: githubAccountName
+          name: 'GITHUB_API_VERSION'
+          value: githubAPIVersion
         }
       ]
     }
@@ -113,7 +111,7 @@ resource copilotDataFunction 'Microsoft.Web/sites@2023-12-01' = {
 }
 
 resource webApp 'Microsoft.Web/sites@2020-06-01' = {
-  name: webapp_name
+  name: webappName
   location: location
   tags: union(tags, { 'azd-service-name': 'frontend' })
   properties: {
@@ -135,28 +133,28 @@ resource webApp 'Microsoft.Web/sites@2020-06-01' = {
           value: 'true'
         }
         {
-          name: 'NEXTAUTH_SECRET'
-          value: '@Microsoft.KeyVault(VaultName=${kv.name};SecretName=${kv::NEXTAUTH_SECRET.name})'
-        }
-        {
-          name: 'NEXTAUTH_URL'
-          value: 'https://${webapp_name}.azurewebsites.net'
-        }
-        {
-          name: 'GITHUB_FUNCTION_URI'
-          value: 'https://${copilotDataFunction.properties.defaultHostName}/'
-        }
-        {
-          name: 'GITHUB_FUNCTION_CODE'
-          value: '@Microsoft.KeyVault(VaultName=${kv.name};SecretName=${kv::GITHUB_FUNCTION_CODE.name})'
-        }
-        {
-          name: 'AZURE_COSMOSDB_URI'
+          name: 'AZURE_COSMOSDB_ENDPOINT'
           value: cosmosDbAccount.properties.documentEndpoint
         }
         {
           name: 'AZURE_COSMOSDB_KEY'
           value: '@Microsoft.KeyVault(VaultName=${kv.name};SecretName=${kv::AZURE_COSMOSDB_KEY.name})'
+        }
+        {
+          name: 'GITHUB_TOKEN'
+          value: '@Microsoft.KeyVault(VaultName=${kv.name};SecretName=${kv::GITHUB_TOKEN.name})'
+        }
+        {
+          name: 'GITHUB_ENTERPRISE'
+          value: githubEnterpriseName
+        }
+        {
+          name: 'GITHUB_ORGANIZATION'
+          value: githubOrganisationName
+        }
+        {
+          name: 'GITHUB_API_VERSION'
+          value: githubAPIVersion
         }
       ]
     }
@@ -175,12 +173,12 @@ resource webApp 'Microsoft.Web/sites@2020-06-01' = {
 }
 
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-12-01-preview' = {
-  name: la_workspace_name
+  name: logWorkspaceName
   location: location
 }
 
 resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
-  name: appinsights_name
+  name: appinsightsName
   location: location
   tags: tags
   kind: 'web'
@@ -192,7 +190,7 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
 }
 
 resource webDiagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
-  name: diagnostic_setting_name
+  name: diagnosticSettingName
   scope: webApp
   properties: {
     workspaceId: logAnalyticsWorkspace.id
@@ -241,14 +239,6 @@ resource kv 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
     enabledForTemplateDeployment: false
   }
 
-  resource NEXTAUTH_SECRET 'secrets' = {
-    name: 'NEXTAUTH-SECRET'
-    properties: {
-      contentType: 'text/plain'
-      value: nextAuthHash
-    }
-  }
-
   resource AZURE_COSMOSDB_KEY 'secrets' = {
     name: 'AZURE-COSMOSDB-KEY'
     properties: {
@@ -265,14 +255,6 @@ resource kv 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
     }
   }
 
-  resource GITHUB_FUNCTION_CODE 'secrets' = {
-    name: 'GITHUB-FUNCTION-CODE'
-    properties: {
-      contentType: 'text/plain'
-      value: listKeys('${copilotDataFunction.id}/host/default', '2023-12-01').functionKeys.default
-    }
-  }
-
   resource GITHUB_TOKEN 'secrets' = {
     name: 'GITHUB-TOKEN'
     properties: {
@@ -283,7 +265,7 @@ resource kv 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
 }
 
 resource cosmosDbAccount 'Microsoft.DocumentDB/databaseAccounts@2023-04-15' = {
-  name: cosmos_name
+  name: cosmosName
   location: location
   tags: tags
   kind: 'GlobalDocumentDB'
@@ -326,7 +308,7 @@ resource historyContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/co
 }
 
 resource storage 'Microsoft.Storage/storageAccounts@2023-04-01' = {
-  name: stg_name
+  name: storageName
   kind: 'StorageV2'
   sku: { name: 'Standard_LRS' }
   location: location

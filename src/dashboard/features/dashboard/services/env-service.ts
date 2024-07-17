@@ -1,5 +1,4 @@
 import { ServerActionResponse } from "@/features/common/server-action-response";
-import { stringIsNullOrEmpty } from "../utils/helpers";
 
 interface GitHubConfig {
   organization: string;
@@ -15,6 +14,7 @@ export const ensureGitHubEnvConfig = (): ServerActionResponse<GitHubConfig> => {
   const version = process.env.GITHUB_API_VERSION;
 
   if (stringIsNullOrEmpty(organization)) {
+    console.log("Missing required environment variable for organization");
     return {
       status: "ERROR",
       errors: [
@@ -69,4 +69,8 @@ export const ensureGitHubEnvConfig = (): ServerActionResponse<GitHubConfig> => {
       version,
     },
   };
+};
+
+export const stringIsNullOrEmpty = (str: string | null | undefined) => {
+  return str === null || str === undefined || str === "";
 };

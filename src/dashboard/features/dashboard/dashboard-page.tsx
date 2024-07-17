@@ -22,7 +22,6 @@ export interface IProps {
 export default async function Dashboard(props: IProps) {
   const allDataPromise = getCopilotMetricsForOrgs(props.searchParams);
   const usagePromise = getCopilotSeatsForOrgs();
-
   const [allData, usage] = await Promise.all([allDataPromise, usagePromise]);
 
   if (allData.status !== "OK") {

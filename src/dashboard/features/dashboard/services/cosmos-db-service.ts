@@ -48,7 +48,6 @@ export const cosmosClient = () => {
   const key = process.env.AZURE_COSMOSDB_KEY;
 
   const response = ensureCosmosEnvConfig();
-
   if (response.status === "ERROR") {
     throw new Error(response.errors[0].message);
   }

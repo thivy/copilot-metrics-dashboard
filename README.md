@@ -2,7 +2,7 @@
 
 # Introduction
 
-**GitHub Copilot Metrics Dashboar**d is a solution accelerator that allows organisations to deploy a dashboard in their Azure Subscription, with a familiar user experience and the added capabilities of viewing metrics from GitHub Copilot.
+**GitHub Copilot Metrics Dashboard** is a solution accelerator that allows organisations to deploy a dashboard in their Azure Subscription to viewing metrics from GitHub Copilot.
 
 TODO: Intros
 

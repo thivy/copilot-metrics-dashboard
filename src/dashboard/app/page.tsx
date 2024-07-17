@@ -1,12 +1,18 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import { signIn } from "next-auth/react";
+import Dashboard, { IProps } from "@/features/dashboard/dashboard-page";
+import { Suspense } from "react";
+import Loading from "./loading";
 
 export const dynamic = "force-dynamic";
-export default function Home() {
+export default function Home(props: IProps) {
+  let id = "initial-dashboard";
+
+  if (props.searchParams.startDate && props.searchParams.endDate) {
+    id = `${id}-${props.searchParams.startDate}-${props.searchParams.endDate}`;
+  }
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <Button onClick={() => signIn("azure-ad")}> Microsoft 365</Button>
-    </main>
+    <Suspense fallback={<Loading />} key={id}>
+      <Dashboard {...props} />
+    </Suspense>
   );
 }

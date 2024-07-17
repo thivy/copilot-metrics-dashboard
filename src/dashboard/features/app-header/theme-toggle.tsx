@@ -1,43 +1,48 @@
 "use client";
 
+import { LaptopMinimal, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LaptopMinimal, Moon, Sun } from "lucide-react";
-import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export function ThemeToggle() {
-  const { setTheme, theme } = useTheme();
-  const [currentTheme, setCurrentTheme] = useState<string | undefined>(theme);
+  const { setTheme } = useTheme();
 
-  if (theme === undefined || theme.length === 0 || currentTheme === undefined) {
-    setCurrentTheme("system");
-  }
   return (
-    <Tabs defaultValue={currentTheme} className="">
-      <TabsList className="flex items-stretch gap-2 rounded-full ">
-        <TabsTrigger
-          className="rounded-full"
-          value="light"
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="icon">
+          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          <span className="sr-only">Toggle theme</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem
+          className="space-x-2"
           onClick={() => setTheme("light")}
         >
-          <Sun size={18} />
-        </TabsTrigger>
-        <TabsTrigger
-          className="rounded-full"
-          value="dark"
+          <Sun size={18} /> <span>Light</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className="space-x-2"
           onClick={() => setTheme("dark")}
         >
-          <Moon size={18} />
-        </TabsTrigger>
-        <TabsTrigger
-          className="rounded-full"
-          value="system"
+          <Moon size={18} /> <span>Dark</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className="space-x-2"
           onClick={() => setTheme("system")}
         >
-          <LaptopMinimal size={18} />
-        </TabsTrigger>
-      </TabsList>
-    </Tabs>
+          <LaptopMinimal size={18} /> <span>System</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

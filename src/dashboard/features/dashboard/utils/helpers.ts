@@ -4,3 +4,7 @@ export const formatDate = (date: string) => {
     day: "numeric",
   });
 };
+
+export const stringIsNullOrEmpty = (str: string | null | undefined) => {
+  return str === null || str === undefined || str === "";
+};

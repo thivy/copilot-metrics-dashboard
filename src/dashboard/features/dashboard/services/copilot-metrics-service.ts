@@ -6,7 +6,7 @@ import { ServerActionResponse } from "@/features/common/server-action-response";
 import { SqlQuerySpec } from "@azure/cosmos";
 import { format, startOfWeek } from "date-fns";
 import { cosmosClient, cosmosConfiguration } from "./cosmos-db-service";
-import { ensureEnvironmentConfiguration } from "./env-service";
+import { ensureGitHubEnvConfig } from "./env-service";
 import { data } from "./sample-data";
 
 export interface CopilotUsage {
@@ -65,7 +65,7 @@ export const getCopilotMetricsForOrgs = async (
 export const getCopilotMetricsForOrgsFromApi = async (): Promise<
   ServerActionResponse<CopilotUsageOutput[]>
 > => {
-  const env = ensureEnvironmentConfiguration();
+  const env = ensureGitHubEnvConfig();
 
   if (env.status !== "OK") {
     return env;

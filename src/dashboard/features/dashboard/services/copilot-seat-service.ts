@@ -3,7 +3,7 @@ import {
   unknownResponseError,
 } from "@/features/common/response-error";
 import { ServerActionResponse } from "@/features/common/server-action-response";
-import { ensureEnvironmentConfiguration } from "./env-service";
+import { ensureGitHubEnvConfig } from "./env-service";
 
 export interface SeatBreakdown {
   total: number;
@@ -27,7 +27,7 @@ export interface SeatManagement {
 export const getCopilotSeatsForOrgs = async (): Promise<
   ServerActionResponse<SeatManagement>
 > => {
-  const env = ensureEnvironmentConfiguration();
+  const env = ensureGitHubEnvConfig();
 
   if (env.status !== "OK") {
     return env;

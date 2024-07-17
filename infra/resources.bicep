@@ -14,11 +14,11 @@ param githubAPIVersion string
 
 param tags object = {}
 
-var shortName = toLower(replace(name, '-', ''))
+var shortName = take(toLower(replace(name, '-', '')),5)
 
 var cosmosName = toLower('${name}-metrics-${resourceToken}')
 var webappName = toLower('${name}-dashboard-${resourceToken}')
-var storageName =  toLower(replace(shortName, '-', ''))
+var storageName =  toLower('${shortName}${resourceToken}')
 var functionAppName = toLower('${name}-ingest-${resourceToken}')
 var appserviceName = toLower('${name}-dashboard-${resourceToken}')
 

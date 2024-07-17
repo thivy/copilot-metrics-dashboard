@@ -1,4 +1,5 @@
 import { AppHeader } from "@/features/app-header/app-header";
+import { ThemeProvider } from "@/features/common/theme-provider";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -17,12 +18,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={cn(inter.className)}>
-        <div className="flex min-h-screen w-full flex-col bg-muted/70 ">
-          <AppHeader />
-          {children}
-        </div>
+        <ThemeProvider attribute="class" enableSystem disableTransitionOnChange>
+          <div className="flex min-h-screen w-full flex-col bg-muted-foreground/5 ">
+            <AppHeader />
+            {children}
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );

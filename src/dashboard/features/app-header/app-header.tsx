@@ -1,21 +1,14 @@
-import { CircleUser, LayoutDashboard, Menu, Settings } from "lucide-react";
+import { LayoutDashboard, Menu } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Image from "next/image";
 import { MainNavItem } from "./main-nav-item";
+import { ThemeToggle } from "./theme-toggle";
 
 const CompanyLogo = () => {
   return (
-    <MainNavItem path="/dashboard">
+    <MainNavItem path="/">
       <Image
         src="/copilot.png"
         width={32}
@@ -29,13 +22,9 @@ const CompanyLogo = () => {
 const MenuItems = () => {
   return (
     <>
-      <MainNavItem path="/dashboard">
+      <MainNavItem path="/">
         <LayoutDashboard size={18} strokeWidth={1.4} />
         Dashboard
-      </MainNavItem>
-      <MainNavItem path="/settings">
-        <Settings size={18} strokeWidth={1.4} />
-        Settings
       </MainNavItem>
     </>
   );
@@ -67,22 +56,7 @@ export const AppHeader = () => {
         <CompanyLogo />
       </nav>
       <div className="flex items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="secondary" size="icon" className="rounded-full">
-              <CircleUser className="h-5 w-5" />
-              <span className="sr-only">Toggle user menu</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuItem>Support</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Logout</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <ThemeToggle />
       </div>
     </header>
   );

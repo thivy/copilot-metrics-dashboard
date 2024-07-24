@@ -41,24 +41,25 @@ Breakdown of code editors which can be used to filter the data.
 
 # Deploy to Azure
 
-You can provision Azure resources for the solution accelerator using either the Azure Developer CLI or clone the repository and setup the provided GitHub Actions.
+The solution accelerator is a web application that uses Azure App Service, Azure Functions, Azure Cosmos DB, Azure Storage and Azure Key Vault. The deployment template will automatically populate the required environment variables in Azure Key Vault and configure the application settings in Azure App Service and Azure Functions.
+
+The following steps will automatically provision Azure resources and deploy the solution accelerator to Azure App Service and Azure Functions using the Azure Developer CLI.
 
 > [!IMPORTANT]
-> 🚨 Regardless of the method you chose you will still need to setup [authentication](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization) using the built-in authentication and authorization capabilities of Azure App Service.
-
-This section will create Azure resources and deploy the solution from your local environment using the Azure Developer CLI. Note that you do not need to clone this repo to complete these steps.
+> 🚨🚨🚨 You must setup [authentication](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization) using the built-in authentication and authorization capabilities of Azure App Service.
 
 #### Prerequisites
 
-```
 You will be prompted to provide the following information:
+
+```
 - GitHub Enterprise name
 - GitHub Organization name
 - GitHub Token
 ```
 
 1. Download the [Azure Developer CLI](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/overview)
-1. If you have not cloned this repo, run `azd init -t microsoft/copilot-metrics-dashboard`. If you have cloned this repo, just run 'azd init' from the repo root directory.
+1. If you have not cloned this repo, run `azd init -t thivy/copilot-metrics-dashboard`. If you have cloned this repo, just run 'azd init' from the repo root directory.
 1. Run `azd up` to provision and deploy the application
 
 ```pwsh

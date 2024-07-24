@@ -35,10 +35,9 @@ export const DateFilter = () => {
       const formatEndDate = format(date?.to, "yyyy-MM-dd");
       const formatStartDate = format(date?.from, "yyyy-MM-dd");
 
-      router.push(
-        `/dashboard?startDate=${formatStartDate}&endDate=${formatEndDate}`,
-        { scroll: false }
-      );
+      router.push(`?startDate=${formatStartDate}&endDate=${formatEndDate}`, {
+        scroll: false,
+      });
       router.refresh();
       setIsOpen(false);
     }

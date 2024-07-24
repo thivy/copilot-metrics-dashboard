@@ -2,9 +2,19 @@
 
 # Introduction
 
-**GitHub Copilot Metrics Dashboard** is a solution accelerator that allows organisations to deploy a dashboard in their Azure Subscription to viewing metrics from GitHub Copilot.
+The GitHub Copilot Metrics Dashboard is a solution accelerator designed to visualize metrics from GitHub Copilot using the [GitHub Copilot Metrics API](https://docs.github.com/en/rest/copilot/copilot-usage?apiVersion=2022-11-28) and [GitHub Copilot User Management API](https://docs.github.com/en/rest/copilot/copilot-user-management?apiVersion=2022-11-28).
 
-TODO: Intros
+The dashboard showcases a range of features:
+
+🌟 **Filters**: Ability to filter metrics by date range, languages,  code editors and visualise data by time frame (daily, weekly, monthly).
+
+🌟 **Acceptance Average**: Percentage of suggestions accepted by users for given date range and group by time range (daily, weekly, monthly).
+
+🌟 **Active Users**: Number of active users for the last cycle.
+
+🌟 **Adoption Rate**: Number of active users who are using GitHub Copilot in relation to the total number of licensed users.
+
+🌟 **Seat Information**: Number of active, inactive, and total users.
 
 # Deploy to Azure
 

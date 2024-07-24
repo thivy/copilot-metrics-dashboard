@@ -38,19 +38,12 @@ Breakdown of code editors which can be used to filter the data.
 
 # Deploy to Azure
 
-You can provision Azure resources for the solution accelerator using either the Azure Developer CLI or the Deploy to Azure button below. Regardless of the method you chose you will still need to setup [authentication](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization) using the built-in authentication and authorization capabilities of Azure App Service.
+You can provision Azure resources for the solution accelerator using either the Azure Developer CLI or clone the repository and setup the provided GitHub Actions.
 
-## Deployment Options
+> [!IMPORTANT] 🔐
+> Regardless of the method you chose you will still need to setup [authentication](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization) using the built-in authentication and authorization capabilities of Azure App Service.
 
-You can deploy the application using one of the following options:
-
-- [1. Azure Developer CLI](#option-1-azure-developer-cli)
-- [2. Azure Portal Deployment](#option-2-azure-portal-deployment)
-
-### Option 1: Azure Developer CLI
-
-> [!IMPORTANT]
-> This section will create Azure resources and deploy the solution from your local environment using the Azure Developer CLI. Note that you do not need to clone this repo to complete these steps.
+This section will create Azure resources and deploy the solution from your local environment using the Azure Developer CLI. Note that you do not need to clone this repo to complete these steps.
 
 1. Download the [Azure Developer CLI](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/overview)
 1. If you have not cloned this repo, run `azd init -t microsoft/copilot-metrics-dashboard`. If you have cloned this repo, just run 'azd init' from the repo root directory.
@@ -64,16 +57,7 @@ azd up
 azd up --debug
 ```
 
-### Option 2: Azure Portal Deployment
-
-> [!WARNING]
-> This button will only create Azure resources. You will still need to deploy the application by following the [deploy to Azure section](/docs/4-deploy-to-azure.md) to build and deploy the application using GitHub actions.
-
-Click on the Deploy to Azure button to deploy the Azure resources for the application.
-
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://aka.ms/anzappazurechatgpt)
-
-> [!IMPORTANT]
+> [!IMPORTANT] 🔐
 > The dashboard must be protected by an identity provider and follow the steps in [Add an identity provider](/docs/5-add-identity.md) section for adding authentication to your app.
 
 # Contributing

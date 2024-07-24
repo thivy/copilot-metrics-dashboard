@@ -45,6 +45,15 @@ You can provision Azure resources for the solution accelerator using either the 
 
 This section will create Azure resources and deploy the solution from your local environment using the Azure Developer CLI. Note that you do not need to clone this repo to complete these steps.
 
+#### Prerequisites
+
+```
+You will be prompted to provide the following information:
+- GitHub Enterprise name
+- GitHub Organization name
+- GitHub Token
+```
+
 1. Download the [Azure Developer CLI](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/overview)
 1. If you have not cloned this repo, run `azd init -t microsoft/copilot-metrics-dashboard`. If you have cloned this repo, just run 'azd init' from the repo root directory.
 1. Run `azd up` to provision and deploy the application
@@ -56,9 +65,6 @@ azd up
 # if you are wanting to see logs run with debug flag
 azd up --debug
 ```
-
-> [!IMPORTANT] 🔐
-> The dashboard must be protected by an identity provider and follow the steps in [Add an identity provider](/docs/5-add-identity.md) section for adding authentication to your app.
 
 # Contributing
 

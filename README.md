@@ -59,7 +59,7 @@ You will be prompted to provide the following information:
 1. Run `azd up` to provision and deploy the application
 
 ```pwsh
-azd init -t microsoft/copilot-metrics-dashboard
+azd init -t thivy/copilot-metrics-dashboard
 azd up
 
 # if you are wanting to see logs run with debug flag

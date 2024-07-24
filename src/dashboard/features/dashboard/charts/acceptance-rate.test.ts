@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { applyTimeFrameLabel } from "../services/helper";
 import { sampleData } from "../services/sample-data";
-import { computeAcceptanceAverage } from "./acceptance-rate.service";
+import { computeAcceptanceAverage } from "./common";
 
 describe("computeAcceptanceAverage", () => {
   it("correctly computes the acceptance average for provided data", () => {

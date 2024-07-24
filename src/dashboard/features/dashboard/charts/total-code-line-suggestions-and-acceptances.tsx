@@ -11,8 +11,11 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { useDashboard } from "../dashboard-state";
-import { CopilotUsageOutput } from "../services/copilot-metrics-service";
 import { ChartHeader } from "./chart-header";
+import {
+  LineSuggestionsAndAcceptancesData,
+  totalLinesSuggestedAndAccepted,
+} from "./common";
 
 export const TotalCodeLineSuggestionsAndAcceptances = () => {
   const { filteredData } = useDashboard();
@@ -91,32 +94,4 @@ const chartConfig: Record<
   },
 };
 
-interface Data {
-  totalLinesAccepted: number;
-  totalLinesSuggested: number;
-  timeFrameDisplay: string;
-}
-
-type DataKey = keyof Data;
-
-export function totalLinesSuggestedAndAccepted(
-  filteredData: CopilotUsageOutput[]
-): Data[] {
-  const codeLineSuggestionsAndAcceptances = filteredData.map((item) => {
-    let total_lines_accepted = 0;
-    let total_lines_suggested = 0;
-
-    item.breakdown.forEach((breakdown) => {
-      total_lines_accepted += breakdown.lines_accepted;
-      total_lines_suggested += breakdown.lines_suggested;
-    });
-
-    return {
-      totalLinesAccepted: total_lines_accepted,
-      totalLinesSuggested: total_lines_suggested,
-      timeFrameDisplay: item.time_frame_display,
-    };
-  });
-
-  return codeLineSuggestionsAndAcceptances;
-}
+type DataKey = keyof LineSuggestionsAndAcceptancesData;

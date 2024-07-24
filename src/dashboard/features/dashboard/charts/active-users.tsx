@@ -11,8 +11,8 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { CopilotUsageOutput } from "../services/copilot-metrics-service";
 import { ChartHeader } from "./chart-header";
+import { ActiveUserData, getActiveUsers } from "./common";
 
 export const ActiveUsers = () => {
   const { filteredData } = useDashboard();
@@ -81,22 +81,4 @@ const chartConfig: Record<
   },
 };
 
-interface Data {
-  totalUsers: number;
-  totalChatUsers: number;
-  timeFrameDisplay: string;
-}
-
-type DataKey = keyof Data;
-
-export function getActiveUsers(filteredData: CopilotUsageOutput[]): Data[] {
-  const rates = filteredData.map((item) => {
-    return {
-      totalUsers: item.total_active_users,
-      totalChatUsers: item.total_active_chat_users,
-      timeFrameDisplay: item.time_frame_display,
-    };
-  });
-
-  return rates;
-}
+type DataKey = keyof ActiveUserData;

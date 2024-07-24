@@ -12,10 +12,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-import {
-  AcceptanceRateData,
-  computeAcceptanceAverage,
-} from "./acceptance-rate.service";
+import { AcceptanceRateData, computeAcceptanceAverage } from "./common";
 
 import { ChartHeader } from "./chart-header";
 

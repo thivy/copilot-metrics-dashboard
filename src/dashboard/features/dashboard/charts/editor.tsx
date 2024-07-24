@@ -1,7 +1,7 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
 
-import { ListItems, PieChartData } from "./language";
+import { ListItems } from "./language";
 
 import { Pie, PieChart } from "recharts";
 
@@ -12,8 +12,8 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { useDashboard } from "../dashboard-state";
-import { CopilotUsageOutput } from "../services/copilot-metrics-service";
 import { ChartHeader } from "./chart-header";
+import { computeEditorData } from "./common";
 
 export const Editor = () => {
   const { filteredData } = useDashboard();
@@ -54,45 +54,3 @@ export const Editor = () => {
 };
 
 const chartConfig = {} satisfies ChartConfig;
-
-export const computeEditorData = (
-  filteredData: CopilotUsageOutput[]
-): Array<PieChartData> => {
-  const editorMap = new Map<string, PieChartData>();
-
-  // Aggregate data
-  filteredData.forEach(({ breakdown }) => {
-    breakdown.forEach(({ editor, active_users }) => {
-      const editorData = editorMap.get(editor) || {
-        id: editor,
-        name: editor,
-        value: 0,
-        fill: "",
-      };
-      editorData.value += active_users;
-      editorMap.set(editor, editorData);
-    });
-  });
-
-  // Convert Map to Array and calculate percentages
-  let totalSum = 0;
-  const editors = Array.from(editorMap.values()).map((editor) => {
-    totalSum += editor.value;
-    return editor;
-  });
-
-  // Calculate percentage values
-  editors.forEach((editor) => {
-    editor.value = Number(((editor.value / totalSum) * 100).toFixed(2));
-  });
-
-  // Sort by value
-  editors.sort((a, b) => b.value - a.value);
-
-  // Assign colors
-  editors.forEach((editor, index) => {
-    editor.fill = `hsl(var(--chart-${index < 4 ? index + 1 : 5}))`;
-  });
-
-  return editors;
-};

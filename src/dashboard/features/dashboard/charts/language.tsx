@@ -11,8 +11,8 @@ import {
 } from "@/components/ui/chart";
 import { Pie, PieChart } from "recharts";
 import { useDashboard } from "../dashboard-state";
-import { CopilotUsageOutput } from "../services/copilot-metrics-service";
 import { ChartHeader } from "./chart-header";
+import { computeLanguageData } from "./common";
 
 export interface PieChartData {
   id: string;
@@ -86,45 +86,3 @@ export function ListItems(props: { items: PieChartData[] }) {
     </ScrollArea>
   );
 }
-
-export const computeLanguageData = (
-  filteredData: CopilotUsageOutput[]
-): Array<PieChartData> => {
-  const languageMap = new Map<string, PieChartData>();
-
-  // Aggregate data
-  filteredData.forEach(({ breakdown }) => {
-    breakdown.forEach(({ language, active_users }) => {
-      const languageData = languageMap.get(language) || {
-        id: language,
-        name: language,
-        value: 0,
-        fill: "",
-      };
-      languageData.value += active_users;
-      languageMap.set(language, languageData);
-    });
-  });
-
-  // Convert Map to Array and calculate percentages
-  let totalSum = 0;
-  const languages = Array.from(languageMap.values()).map((language) => {
-    totalSum += language.value;
-    return language;
-  });
-
-  // Calculate percentage values
-  languages.forEach((language) => {
-    language.value = Number(((language.value / totalSum) * 100).toFixed(2));
-  });
-
-  // Sort by value
-  languages.sort((a, b) => b.value - a.value);
-
-  // Assign colors
-  languages.forEach((language, index) => {
-    language.fill = `hsl(var(--chart-${index < 4 ? index + 1 : 5}))`;
-  });
-
-  return languages;
-};

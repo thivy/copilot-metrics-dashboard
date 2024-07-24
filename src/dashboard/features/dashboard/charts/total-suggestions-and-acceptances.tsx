@@ -11,8 +11,11 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { useDashboard } from "../dashboard-state";
-import { CopilotUsageOutput } from "../services/copilot-metrics-service";
 import { ChartHeader } from "./chart-header";
+import {
+  SuggestionAcceptanceData,
+  totalSuggestionsAndAcceptances,
+} from "./common";
 
 export const TotalSuggestionsAndAcceptances = () => {
   const { filteredData } = useDashboard();
@@ -83,32 +86,4 @@ const chartConfig: Record<
   },
 };
 
-interface Data {
-  totalAcceptancesCount: number;
-  totalSuggestionsCount: number;
-  timeFrameDisplay: string;
-}
-
-type DataKey = keyof Data;
-
-export function totalSuggestionsAndAcceptances(
-  filteredData: CopilotUsageOutput[]
-): Data[] {
-  const rates = filteredData.map((item) => {
-    let totalAcceptancesCount = 0;
-    let totalSuggestionsCount = 0;
-
-    item.breakdown.forEach((breakdown) => {
-      totalAcceptancesCount += breakdown.acceptances_count;
-      totalSuggestionsCount += breakdown.suggestions_count;
-    });
-
-    return {
-      totalAcceptancesCount,
-      totalSuggestionsCount,
-      timeFrameDisplay: item.time_frame_display,
-    };
-  });
-
-  return rates;
-}
+type DataKey = keyof SuggestionAcceptanceData;

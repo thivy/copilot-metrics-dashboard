@@ -1,9 +1,12 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
 import { useDashboard } from "../dashboard-state";
-import { CopilotUsageOutput } from "../services/copilot-metrics-service";
-import { computeAcceptanceAverage } from "./acceptance-rate";
 import { ChartHeader } from "./chart-header";
+import {
+  computeActiveUserAverage,
+  computeAdoptionRate,
+  computeCumulativeAcceptanceAverage,
+} from "./common";
 import StatsCard from "./stats-card";
 
 export const Stats = () => {
@@ -59,38 +62,4 @@ export const Overview = () => {
       </CardContent>
     </Card>
   );
-};
-
-export const computeActiveUserAverage = (
-  filteredData: CopilotUsageOutput[]
-) => {
-  const activeUsersSum: number = filteredData.reduce(
-    (sum: number, item: { total_active_users: number }) =>
-      sum + item.total_active_users,
-    0
-  );
-
-  const averageActiveUsers = activeUsersSum / filteredData.length;
-  return averageActiveUsers;
-};
-
-export const computeAdoptionRate = (seatManagement: any) => {
-  const adoptionRate =
-    (seatManagement.seat_breakdown.active_this_cycle /
-      seatManagement.seat_breakdown.total) *
-    100;
-  return adoptionRate;
-};
-
-export const computeCumulativeAcceptanceAverage = (
-  filteredData: CopilotUsageOutput[]
-) => {
-  const acceptanceAverages = computeAcceptanceAverage(filteredData);
-
-  const totalAcceptanceRate = acceptanceAverages.reduce(
-    (sum, rate) => sum + rate.acceptanceRate,
-    0
-  );
-
-  return totalAcceptanceRate / acceptanceAverages.length;
 };

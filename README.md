@@ -40,8 +40,8 @@ Breakdown of code editors which can be used to filter the data.
 
 You can provision Azure resources for the solution accelerator using either the Azure Developer CLI or clone the repository and setup the provided GitHub Actions.
 
-> [!IMPORTANT] 🔐
-> Regardless of the method you chose you will still need to setup [authentication](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization) using the built-in authentication and authorization capabilities of Azure App Service.
+> [!IMPORTANT]
+> 🚨 Regardless of the method you chose you will still need to setup [authentication](https://learn.microsoft.com/en-us/azure/app-service/overview-authentication-authorization) using the built-in authentication and authorization capabilities of Azure App Service.
 
 This section will create Azure resources and deploy the solution from your local environment using the Azure Developer CLI. Note that you do not need to clone this repo to complete these steps.
 

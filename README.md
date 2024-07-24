@@ -1,5 +1,8 @@
 # GitHub Copilot Metrics - Dashboard
 
+1. [Introduction](#introduction)
+2. [Deploy to Azure](#deploy-to-azure)
+
 # Introduction
 
 The GitHub Copilot Metrics Dashboard is a solution accelerator designed to visualize metrics from GitHub Copilot using the [GitHub Copilot Metrics API](https://docs.github.com/en/rest/copilot/copilot-usage?apiVersion=2022-11-28) and [GitHub Copilot User Management API](https://docs.github.com/en/rest/copilot/copilot-user-management?apiVersion=2022-11-28).

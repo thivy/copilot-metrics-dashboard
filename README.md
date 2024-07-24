@@ -11,33 +11,20 @@ The GitHub Copilot Metrics Dashboard is a solution accelerator designed to visua
 
 The dashboard showcases a range of features:
 
-#### 🌟 Filters
-
+**Filters:**
 Ability to filter metrics by date range, languages, code editors and visualise data by time frame (daily, weekly, monthly).
 
-#### 🌟 Acceptance Average
+**Acceptance Average:** Percentage of suggestions accepted by users for given date range and group by time range (daily, weekly, monthly).
 
-Percentage of suggestions accepted by users for given date range and group by time range (daily, weekly, monthly).
+**Active Users:** Number of active users for the last cycle.
 
-#### 🌟 Active Users
+**Adoption Rate:** Number of active users who are using GitHub Copilot in relation to the total number of licensed users.
 
-Number of active users for the last cycle.
+**Seat Information:** Number of active, inactive, and total users.
 
-#### 🌟 Adoption Rate
+**Language:** Breakdown of languages which can be used to filter the data.
 
-Number of active users who are using GitHub Copilot in relation to the total number of licensed users.
-
-#### 🌟 Seat Information
-
-Number of active, inactive, and total users.
-
-#### 🌟 Language
-
-Breakdown of languages which can be used to filter the data.
-
-#### 🌟 Code Editors
-
-Breakdown of code editors which can be used to filter the data.
+**Code Editors:** Breakdown of code editors which can be used to filter the data.
 
 # Deploy to Azure
 

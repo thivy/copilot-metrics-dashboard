@@ -5,7 +5,7 @@ import { Filters } from "./filter/header-filter";
 export const Header = () => {
   return (
     <PageHeader>
-      <PageTitle>Dashboard</PageTitle>
+      <PageTitle>GitHub Copilot Metrics</PageTitle>
       <div className="flex gap-8 justify-between flex-col md:flex-row">
         <Filters />
         <div className="flex gap-2">

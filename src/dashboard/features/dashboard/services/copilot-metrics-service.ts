@@ -4,10 +4,11 @@ import {
 } from "@/features/common/response-error";
 import { ServerActionResponse } from "@/features/common/server-action-response";
 import { SqlQuerySpec } from "@azure/cosmos";
-import { format, startOfWeek } from "date-fns";
+import { format } from "date-fns";
 import { cosmosClient, cosmosConfiguration } from "./cosmos-db-service";
 import { ensureGitHubEnvConfig } from "./env-service";
-import { data } from "./sample-data";
+import { applyTimeFrameLabel } from "./helper";
+import { sampleData } from "./sample-data";
 
 export interface CopilotUsage {
   total_suggestions_count: number;
@@ -150,41 +151,10 @@ export const getCopilotMetricsForOrgsFromDatabase = async (
 export const _getCopilotMetrics = (): Promise<CopilotUsageOutput[]> => {
   const promise = new Promise<CopilotUsageOutput[]>((resolve) => {
     setTimeout(() => {
-      const weekly = applyTimeFrameLabel(data);
+      const weekly = applyTimeFrameLabel(sampleData);
       resolve(weekly);
     }, 1000);
   });
 
   return promise;
-};
-
-export const applyTimeFrameLabel = (
-  data: CopilotUsage[]
-): CopilotUsageOutput[] => {
-  // Sort data by 'day'
-  const sortedData = data.sort(
-    (a, b) => new Date(a.day).getTime() - new Date(b.day).getTime()
-  );
-
-  const dataWithTimeFrame: CopilotUsageOutput[] = [];
-
-  sortedData.forEach((item) => {
-    // Convert 'day' to a Date object and find the start of its week
-    const date = new Date(item.day);
-    const weekStart = startOfWeek(date, { weekStartsOn: 1 });
-
-    // Create a unique week identifier
-    const weekIdentifier = format(weekStart, "MMM dd");
-    const monthIdentifier = format(date, "MMM yy");
-
-    const output: CopilotUsageOutput = {
-      ...item,
-      time_frame_week: weekIdentifier,
-      time_frame_month: monthIdentifier,
-      time_frame_display: weekIdentifier,
-    };
-    dataWithTimeFrame.push(output);
-  });
-
-  return dataWithTimeFrame;
 };
